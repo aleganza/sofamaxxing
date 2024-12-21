@@ -16,16 +16,33 @@ export enum MediaFormat {
   MUSIC = "Music",
 }
 
-export enum SubOrSub {
+export enum SubOrDub {
   SUB = "Sub",
   DUB = "Dub",
   BOTH = "Both",
+}
+
+export interface Images {
+  cover?: string;
+  coverMobile?: string;
+  logo?: string;
+  poster?: string;
+  background?: string; // banner
 }
 
 export interface FuzzyDate {
   year?: number;
   month?: number;
   day?: number;
+}
+
+export interface MediaSeason {
+  id: number;
+  number: number;
+  title?: string;
+  description?: string;
+  releaseDate?: FuzzyDate;
+  totalEpisodes?: number;
 }
 
 export interface Subtitle {
@@ -57,6 +74,7 @@ export interface MediaEpisode {
   isFiller?: boolean;
   image?: string;
   releaseDate?: FuzzyDate;
+  runtime?: string;
   [x: string]: unknown;
 }
 
@@ -82,14 +100,17 @@ export interface MediaResult {
 }
 
 export interface MediaInfo extends MediaResult {
+  hasSeasons: boolean;
   genres?: string[];
   description?: string;
+  quality?: string;
+  runtime?: string;
   totalEpisodes?: number;
-  subOrDub?: SubOrSub;
+  totalSeasons?: number;
+  subOrDub?: SubOrDub;
   synonyms?: string[];
   season?: string;
   color?: string;
-  isAnime?: boolean;
   episodes?: MediaEpisode[];
   [x: string]: unknown;
 }

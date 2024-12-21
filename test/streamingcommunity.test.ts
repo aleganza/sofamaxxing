@@ -3,15 +3,13 @@ import StreamingCommunity from "../src/providers/StreamingCommunity";
 test("crawl", async () => {
   const api = new StreamingCommunity();
 
-  console.log(await api.search(""))
+  const search = await api.search("Arcane");
+  const id = search.results[0].id;
 
-  // const search = await api.search("Naruto");
-  // const id = search.results[0].id;
+  const info = await api.fetchInfo(id);
+  const episodeId = info.id;
 
-  // const info = await api.fetchInfo(id);
-  // const episodeId = info.id;
+  const sources = await api.fetchSources(id, episodeId);
 
-  // const sources = await api.fetchSources(episodeId);
-
-  // console.log(sources);
+  console.log(sources);
 });

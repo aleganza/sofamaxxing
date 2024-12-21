@@ -1,18 +1,20 @@
 import axios from "axios";
 import { load } from "cheerio";
-import Provider from "../models/provider"
+
+import Provider from "../models/provider";
 import {
-  Search,
-  MediaResult,
-  SubOrSub,
   MediaInfo,
+  MediaResult,
+  Search,
   Sources,
+  SubOrDub,
 } from "../models/types";
 
 class AnimeUnity extends Provider {
-  protected languages = "it";
   override readonly name = "AnimeUnity";
   protected override baseUrl = "https://www.animeunity.to";
+  protected languages = "it";
+  protected colorHEX = "#007bff";
   protected override logo = "https://www.animeunity.to/favicon-32x32.png";
 
   /**
@@ -44,7 +46,7 @@ class AnimeUnity extends Provider {
           cover: items[i].imageurl_cover,
           rating: parseFloat(items[i].score),
           releaseDate: items[i].date,
-          subOrDub: `${items[i].dub ? SubOrSub.DUB : SubOrSub.SUB}`,
+          subOrDub: `${items[i].dub ? SubOrDub.DUB : SubOrDub.SUB}`,
         });
       }
 
@@ -87,9 +89,10 @@ class AnimeUnity extends Provider {
         hasNextPage: totalPages > page,
         totalPages: totalPages,
         id: id,
+        hasSeasons: false,
         title: $("h1.title")?.text().trim(),
-        url: url,
-        alID: $(".banner")?.attr("style")?.split("/")?.pop()?.split("-")[0],
+        // url: url,
+        // alID: $(".banner")?.attr("style")?.split("/")?.pop()?.split("-")[0],
         genres:
           $(".info-wrapper.pt-3.pb-3 small")
             ?.map((_, element): string => {
@@ -98,7 +101,6 @@ class AnimeUnity extends Provider {
             .toArray() ?? undefined,
         totalEpisodes: totalEpisodes,
         image: $("img.cover")?.attr("src"),
-        // image: $('meta[property="og:image"]')?.attr('content'),
         cover:
           $(".banner")?.attr("src") ??
           $(".banner")?.attr("style")?.replace("background: url(", ""),
