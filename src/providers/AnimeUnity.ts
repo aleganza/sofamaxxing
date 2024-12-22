@@ -158,7 +158,7 @@ class AnimeUnity extends Provider {
           .text()
           ?.match(/expires': '(.*)'/)![1];
 
-        const defaultUrl = `${domain}?token=${token}&referer=&expires=${expires}&h=1`;
+        const defaultUrl = `${domain}${domain.includes("?") ? "&" : "?"}token=${token}&referer=&expires=${expires}&h=1`;
         const m3u8Content = await axios.get(defaultUrl);
 
         if (m3u8Content.data.includes("EXTM3U")) {
