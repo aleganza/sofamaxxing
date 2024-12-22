@@ -63,6 +63,10 @@ export interface Video {
    * in bytes
    */
   size?: number;
+  /**
+   * in seconds
+   */
+  runtime?: number
   [x: string]: unknown;
 }
 
@@ -91,7 +95,7 @@ export interface MediaResult {
   id: string;
   title: string;
   image?: string;
-  cover?: string;
+  cover?: string,
   status?: MediaStatus;
   rating?: number;
   format?: MediaFormat;
@@ -103,14 +107,14 @@ export interface MediaInfo extends MediaResult {
   hasSeasons: boolean;
   genres?: string[];
   description?: string;
-  quality?: string;
-  runtime?: string;
   totalEpisodes?: number;
   totalSeasons?: number;
   subOrDub?: SubOrDub;
   synonyms?: string[];
-  season?: string;
   color?: string;
+  cover?: string;
+  banner?: string;
+  season?: string;
   episodes?: MediaEpisode[];
   [x: string]: unknown;
 }

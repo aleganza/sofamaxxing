@@ -158,6 +158,22 @@ class AnimeUnity extends Provider {
           .text()
           ?.match(/expires': '(.*)'/)![1];
 
+        // secondary data
+        const size = Number(
+          $('script:contains("window.video")')
+            .text()
+            ?.match(/"size":(\d+)/)?.[1]
+        );
+
+        const runtime = Number(
+          $('script:contains("window.video")')
+            .text()
+            ?.match(/"duration":(\d+)/)?.[1]
+        );
+
+        console.log("Size:", size);
+        console.log("Runtime:", runtime);
+
         const defaultUrl = `${domain}${domain.includes("?") ? "&" : "?"}token=${token}&referer=&expires=${expires}&h=1`;
         const m3u8Content = await axios.get(defaultUrl);
 
@@ -184,6 +200,8 @@ class AnimeUnity extends Provider {
           url: defaultUrl,
           quality: `default`,
           isM3U8: true,
+          size: size * 1024, // should be retrieved in KBs I guess
+          runtime,
         });
 
         episodeSources.download = $('script:contains("window.downloadUrl ")')

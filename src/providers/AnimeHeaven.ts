@@ -48,8 +48,6 @@ class AnimeHeaven extends Provider {
       });
       const $ = load(await res.text());
 
-      // return {} as MediaInfo
-
       const info: MediaInfo = {
         id,
         hasSeasons: false,
@@ -100,7 +98,6 @@ class AnimeHeaven extends Provider {
         episodeSources.sources.push({
           url: source,
           quality: "default",
-          isM3U8: false,
         });
 
       const altSource = $("#vid")?.find("source")?.eq(1)?.attr("src");
@@ -108,7 +105,6 @@ class AnimeHeaven extends Provider {
         episodeSources.sources.push({
           url: altSource,
           quality: "backup",
-          isM3U8: false,
         });
 
       return episodeSources;
