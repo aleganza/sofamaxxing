@@ -1,7 +1,8 @@
 import axios from "axios";
 import { load } from "cheerio";
+
 import Provider from "../models/provider";
-import { Search, MediaResult, MediaInfo, Sources } from "../models/types";
+import { MediaInfo, MediaResult, Search, Sources } from "../models/types";
 
 class AnimeHeaven extends Provider {
   override readonly name = "AnimeHeaven";

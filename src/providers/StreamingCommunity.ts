@@ -1,9 +1,5 @@
 import axios from "axios";
 import { load } from "cheerio";
-import {
-  parseFuzzyDate,
-  parseImages,
-} from "../modules/utils/streamingcommunity";
 
 import Provider from "../models/provider";
 import {
@@ -15,6 +11,10 @@ import {
   Sources,
   SubOrDub,
 } from "../models/types";
+import {
+  parseFuzzyDate,
+  parseImages,
+} from "../modules/utils/streamingcommunity";
 
 class StreamingCommunity extends Provider {
   override readonly name = "StreamingCommunity";
@@ -58,7 +58,7 @@ class StreamingCommunity extends Provider {
 
       return searchResult;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       throw new Error((error as Error).message);
     }
   }
