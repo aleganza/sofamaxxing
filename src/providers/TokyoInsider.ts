@@ -21,9 +21,12 @@ class TokyoInsider extends Provider {
 
       if (!$) return { results: [] };
 
-      const totalPages = $(".pager")
-        ? Number($(".pager").find("a:not([class])").eq(-1).text())
-        : 1;
+      const pager = $(".pager");
+      const totalPages =
+        pager.length > 0 && pager.find("a:not([class])").length > 0
+          ? Number(pager.find("a:not([class])").eq(-1).text().trim()) || 1
+          : 1;
+
       const searchResult: Search<MediaResult> = {
         currentPage: page,
         hasNextPage: totalPages > page,
