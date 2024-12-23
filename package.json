@@ -1,7 +1,7 @@
 {
   "name": "sofamaxxing",
   "version": "1.0.0",
-  "description": "badass anime api",
+  "description": "Api to fetch anime/movies/tv shows",
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
@@ -11,7 +11,9 @@
   },
   "keywords": [
     "api",
-    "anime"
+    "anime",
+    "movies",
+    "tv"
   ],
   "author": "aleganza",
   "license": "MIT",
