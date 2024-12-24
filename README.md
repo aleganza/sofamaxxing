@@ -1,4 +1,4 @@
 <p align="center">
-    <img width="200px" src="https://i.pinimg.com/736x/87/da/11/87da116579fd377fc30a7b09b8ba2a0d.jpg"/>
+    <img src="https://static.wikia.nocookie.net/jujutsu-kaisen/images/4/4c/Yuji_watching_movies_as_training_%28Anime%29.png/revision/latest?cb=20201108043702"/>
     <h1 align="center">sofamaxxing</h1>
 </p>
