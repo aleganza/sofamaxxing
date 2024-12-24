@@ -12,10 +12,10 @@ import {
 
 class AnimeToast extends Provider {
   override readonly name = "AnimeToast";
-  protected override baseUrl = "https://www.animetoast.cc";
-  protected languages = "de";
-  protected colorHEX = "#694ba1";
-  protected override logo =
+   override baseUrl = "https://www.animetoast.cc";
+   languages = "de";
+   colorHEX = "#694ba1";
+   override logo =
     "https://www.animetoast.cc/wp-content/uploads/2018/03/toastfavi-300x300.png";
 
   async search(query: string, page: number = 1): Promise<Search<MediaResult>> {

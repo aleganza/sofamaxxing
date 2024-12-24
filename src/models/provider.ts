@@ -3,15 +3,15 @@ import { Search, MediaResult, MediaInfo, Sources } from "./types";
 abstract class Provider {
   abstract readonly name: string;
 
-  protected abstract readonly baseUrl: string;
+  abstract readonly baseUrl: string;
 
-  protected readonly CDNUrl: string | null = null;
+  readonly CDNUrl: string | null = null;
 
-  protected abstract readonly languages: string | string[];
+  abstract readonly languages: string | string[];
 
-  protected readonly colorHEX: string | null = null;
+  readonly colorHEX: string | null = null;
 
-  protected readonly logo: string =
+  readonly logo: string =
     "https://png.pngtree.com/png-vector/20210221/ourmid/pngtree-error-404-not-found-neon-effect-png-image_2928214.jpg";
 
   abstract search(query: string, ...args: any): Promise<Search<MediaResult>>;

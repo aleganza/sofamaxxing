@@ -12,10 +12,10 @@ import {
 
 class AnimeUnity extends Provider {
   override readonly name = "AnimeUnity";
-  protected override baseUrl = "https://www.animeunity.to";
-  protected languages = "it";
-  protected colorHEX = "#007bff";
-  protected override logo = "https://www.animeunity.to/favicon-32x32.png";
+   override baseUrl = "https://www.animeunity.to";
+   languages = "it";
+   colorHEX = "#007bff";
+   override logo = "https://www.animeunity.to/favicon-32x32.png";
 
   /**
    * @param query Search query
@@ -170,9 +170,6 @@ class AnimeUnity extends Provider {
             .text()
             ?.match(/"duration":(\d+)/)?.[1]
         );
-
-        console.log("Size:", size);
-        console.log("Runtime:", runtime);
 
         const defaultUrl = `${domain}${domain.includes("?") ? "&" : "?"}token=${token}&referer=&expires=${expires}&h=1`;
         const m3u8Content = await axios.get(defaultUrl);

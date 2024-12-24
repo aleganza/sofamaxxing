@@ -6,10 +6,10 @@ import { MediaInfo, MediaResult, Search, Sources } from "../models/types";
 
 class AnimeHeaven extends Provider {
   override readonly name = "AnimeHeaven";
-  protected override baseUrl = "https://animeheaven.me";
-  protected languages = "en";
-  protected colorHEX = "#e81e2f";
-  protected override logo = "https://animeheaven.me/favicon.ico";
+   override baseUrl = "https://animeheaven.me";
+   languages = "en";
+   colorHEX = "#e81e2f";
+   override logo = "https://animeheaven.me/favicon.ico";
 
   override async search(query: string): Promise<Search<MediaResult>> {
     try {
