@@ -5,6 +5,7 @@ import chalk from "chalk";
 import Fastify from "fastify";
 
 import animeunity from "./routes/providers/animeunity";
+import anix from "./routes/providers/anix";
 
 const fastify = Fastify({
   maxParamLength: 1000,
@@ -19,7 +20,24 @@ const PORT = Number(process.env.PORT) || 3000;
     methods: "GET",
   });
 
+  // api-key protection in production
+  fastify.addHook("preHandler", async (request, reply) => {
+    if (process.env.NODE_ENV === "development") return;
+
+    const apiKey = request.headers["x-api-key"];
+
+    if (!apiKey) {
+      return reply.status(400).send({ message: "API Key is required" });
+    }
+
+    if (apiKey !== process.env.API_KEY) {
+      return reply.status(403).send({ message: "Forbidden: Invalid API Key" });
+    }
+  });
+
+  // regiser providers
   await fastify.register(animeunity, { prefix: "/animeunity" });
+  await fastify.register(anix, { prefix: "/anix" });
 
   fastify.get("/", (_, reply) => {
     reply
@@ -31,9 +49,7 @@ const PORT = Number(process.env.PORT) || 3000;
 
   fastify.get("/providers", (_, reply) => {
     reply.status(200).send({
-      providers: [
-        "/animeunity"
-      ]
+      providers: ["/animeunity", "/anix"],
     });
   });
 

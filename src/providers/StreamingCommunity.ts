@@ -18,11 +18,11 @@ import {
 
 class StreamingCommunity extends Provider {
   override readonly name = "StreamingCommunity";
-   override baseUrl = "https://streamingcommunity.family";
+  override baseUrl = "https://streamingcommunity.prof"; /*family broken*/
   override CDNUrl = "https://cdn.streamingcommunity.photos/images";
-   languages = ["it", "en"];
-   colorHEX = "#018850";
-   override logo =
+  languages = ["it", "en"];
+  colorHEX = "#018850";
+  override logo =
     "https://streamingcommunity.family/icon/favicon-32x32.png?v=2";
 
   override async search(

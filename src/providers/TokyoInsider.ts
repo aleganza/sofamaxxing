@@ -7,10 +7,10 @@ import { MONTHS } from "../modules/utils/tokyoinsider";
 
 class TokyoInsider extends Provider {
   override readonly name = "TokyoInsider";
-   override baseUrl = "https://www.tokyoinsider.com";
-   languages = "en";
-   colorHEX = "#f568cf";
-   override logo = "https://www.tokyoinsider.com/favicon.ico";
+  override baseUrl = "https://www.tokyoinsider.com";
+  languages = "en";
+  colorHEX = "#f568cf";
+  override logo = "https://www.tokyoinsider.com/favicon.ico";
 
   async search(query: string, page: number = 1): Promise<Search<MediaResult>> {
     try {
