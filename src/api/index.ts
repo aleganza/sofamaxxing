@@ -5,6 +5,7 @@ import Fastify from "fastify";
 
 import animeunity from "./routes/providers/animeunity";
 import anix from "./routes/providers/anix";
+import gogoanime from "./routes/providers/gogoanime";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { inject } from "@vercel/analytics";
 
@@ -39,6 +40,7 @@ const PORT = Number(process.env.PORT) || 3000;
   // regiser providers
   await fastify.register(animeunity, { prefix: "/animeunity" });
   await fastify.register(anix, { prefix: "/anix" });
+  await fastify.register(gogoanime, { prefix: "/gogoanime" });
 
   fastify.get("/", (_, reply) => {
     reply
@@ -50,7 +52,7 @@ const PORT = Number(process.env.PORT) || 3000;
 
   fastify.get("/providers", (_, reply) => {
     reply.status(200).send({
-      providers: ["/animeunity", "/anix"],
+      providers: ["/animeunity", "/anix", "/gogoanime"],
     });
   });
 
