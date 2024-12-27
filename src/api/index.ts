@@ -6,6 +6,7 @@ import Fastify from "fastify";
 import animeunity from "./routes/providers/animeunity";
 import anix from "./routes/providers/anix";
 import { VercelRequest, VercelResponse } from "@vercel/node";
+import { inject } from "@vercel/analytics";
 
 const fastify = Fastify({
   maxParamLength: 1000,
@@ -62,6 +63,7 @@ const PORT = Number(process.env.PORT) || 3000;
 })();
 
 export default async (req: VercelRequest, res: VercelResponse) => {
+  inject();
   await fastify.ready();
   fastify.server.emit("request", req, res);
 };

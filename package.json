@@ -30,6 +30,8 @@
   "dependencies": {
     "@consumet/extensions": "github:consumet/consumet.ts",
     "@fastify/cors": "^10.0.1",
+    "@vercel/analytics": "^1.4.1",
+    "@vercel/node": "^5.0.0",
     "axios": "^1.7.9",
     "cheerio": "^1.0.0",
     "dotenv": "^16.4.7",
