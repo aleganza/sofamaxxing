@@ -48,9 +48,9 @@ const routes = async (fastify: FastifyInstance) => {
     }
   });
 
-  fastify.get("/episode/*", async (request, reply) => {
+  fastify.get("/episode/:episodeId", async (request, reply) => {
     const { episodeId } = request.params as { episodeId: string };
-
+  
     try {
       const result = await zoro.fetchEpisodeSources(episodeId);
       return reply.status(200).send(result);
@@ -59,6 +59,7 @@ const routes = async (fastify: FastifyInstance) => {
       return reply.status(500).send({ message: "Internal server error" });
     }
   });
+  
 };
 
 export default routes;
