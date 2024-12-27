@@ -1,11 +1,11 @@
 import "dotenv/config";
 
 import FastifyCors from "@fastify/cors";
-import chalk from "chalk";
 import Fastify from "fastify";
 
 import animeunity from "./routes/providers/animeunity";
 import anix from "./routes/providers/anix";
+import { VercelRequest, VercelResponse } from "@vercel/node";
 
 const fastify = Fastify({
   maxParamLength: 1000,
@@ -59,12 +59,9 @@ const PORT = Number(process.env.PORT) || 3000;
       error: "Page Not Found",
     });
   });
-
-  try {
-    await fastify.listen({ port: PORT, host: "0.0.0.0" });
-    console.log(chalk.green(`Server listening on http://localhost:${PORT}`));
-  } catch (err) {
-    fastify.log.error(err);
-    process.exit(1);
-  }
 })();
+
+export default async (req: VercelRequest, res: VercelResponse) => {
+  await fastify.ready();
+  fastify.server.emit("request", req, res);
+};

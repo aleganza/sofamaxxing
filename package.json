@@ -2,10 +2,10 @@
   "name": "sofamaxxing",
   "version": "1.0.0",
   "description": "Api to fetch anime/movies/tv shows",
-  "main": "src/api/server.ts",
+  "main": "src/api/index.ts",
   "scripts": {
-    "start": "ts-node src/api/server.ts",
-    "dev": "nodemon src/api/server.ts",
+    "start": "ts-node src/api/index.ts",
+    "dev": "nodemon src/api/index.ts",
     "build": "tsc",
     "test": "jest"
   },
