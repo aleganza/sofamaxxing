@@ -7,8 +7,7 @@ const routes = async (fastify: FastifyInstance) => {
   fastify.get("/", async (_, reply) => {
     try {
       return reply.status(200).send({
-        name: anix.name,
-        description: "Welcome to Anix.",
+        description: `Welcome to ${anix.name}.`,
         routes: ["/:query", "/info/:id", "/episode/:episodeId"],
       });
     } catch (err) {

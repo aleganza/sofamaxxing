@@ -1,21 +1,17 @@
 import { FastifyInstance } from "fastify";
+import Gogoanime from "@consumet/extensions/dist/providers/anime/gogoanime";
 
-import AnimeUnity from "../../../providers/AnimeUnity";
-
-const animeUnity = new AnimeUnity();
+const gogoanime = new Gogoanime();
 
 const routes = async (fastify: FastifyInstance) => {
   fastify.get("/", async (_, reply) => {
     try {
       return reply.status(200).send({
-        description: `Welcome to ${animeUnity.name}.`,
-        logo: animeUnity.logo,
-        baseUrl: animeUnity.baseUrl,
-        supportedLanguages: animeUnity.languages,
+        description: `Welcome to ${gogoanime.name}.`,
         routes: ["/:query", "/info/:id", "/episode/:episodeId"],
       });
     } catch (err) {
-      console.error("Error in /animeunity route:", err);
+      console.error("Error in /anix route:", err);
       return reply.status(500).send({ message: "Internal server error" });
     }
   });
@@ -30,7 +26,7 @@ const routes = async (fastify: FastifyInstance) => {
     }
 
     try {
-      const result = await animeUnity.search(query);
+      const result = await gogoanime.search(query);
       return reply.status(200).send(result);
     } catch (err) {
       console.error("Error in search:", err);
@@ -40,22 +36,21 @@ const routes = async (fastify: FastifyInstance) => {
 
   fastify.get("/info/:id", async (request, reply) => {
     const { id } = request.params as { id: string };
-    const { page = 1 } = request.query as { page?: number };
 
     try {
-      const result = await animeUnity.fetchInfo(id, page);
+      const result = await gogoanime.fetchAnimeInfo(id);
       return reply.status(200).send(result);
     } catch (err) {
-      console.error("Error in fetchInfo:", err);
+      console.error("Error in fetchAnimeInfo:", err);
       return reply.status(500).send({ message: "Internal server error" });
     }
   });
 
-  fastify.get("/episode/*", async (request, reply) => {
-    const episodeId = (request.params as any)["*"] as string;
+  fastify.get("/episode/:episodeId", async (request, reply) => {
+    const { episodeId } = request.params as { episodeId: string };
 
     try {
-      const result = await animeUnity.fetchSources(episodeId);
+      const result = await gogoanime.fetchEpisodeSources(episodeId);
       return reply.status(200).send(result);
     } catch (err) {
       console.error("Error in fetchSources:", err);
