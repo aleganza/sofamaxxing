@@ -1,7 +1,6 @@
 import { FastifyInstance } from "fastify";
 
-// import AnimeUnity from "../../../providers/AnimeUnity";
-import AnimeUnity from "@consumet/extensions/dist/providers/anime/animeunity";
+import AnimeUnity from "../../../providers/AnimeUnity";
 
 const animeUnity = new AnimeUnity();
 
@@ -10,9 +9,9 @@ const routes = async (fastify: FastifyInstance) => {
     try {
       return reply.status(200).send({
         description: `Welcome to ${animeUnity.name}.`,
-        // logo: animeUnity.logo,
-        // baseUrl: animeUnity.baseUrl,
-        // supportedLanguages: animeUnity.languages,
+        logo: animeUnity.logo,
+        baseUrl: animeUnity.baseUrl,
+        supportedLanguages: animeUnity.languages,
         routes: ["/:query", "/info/:id", "/episode/:episodeId"],
       });
     } catch (err) {
@@ -44,7 +43,7 @@ const routes = async (fastify: FastifyInstance) => {
     const { page = 1 } = request.query as { page?: number };
 
     try {
-      const result = await animeUnity.fetchAnimeInfo(id, page);
+      const result = await animeUnity.fetchInfo(id, page);
       return reply.status(200).send(result);
     } catch (err) {
       console.error("Error in fetchInfo:", err);
@@ -56,7 +55,7 @@ const routes = async (fastify: FastifyInstance) => {
     const episodeId = (request.params as any)["*"] as string;
 
     try {
-      const result = await animeUnity.fetchEpisodeSources(episodeId);
+      const result = await animeUnity.fetchSources(episodeId);
       return reply.status(200).send(result);
     } catch (err) {
       console.error("Error in fetchSources:", err);
