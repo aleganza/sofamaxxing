@@ -8,19 +8,42 @@ import anix from "./routes/providers/anix";
 import gogoanime from "./routes/providers/gogoanime";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { inject } from "@vercel/analytics";
+import fastifyRateLimit from "@fastify/rate-limit";
 
 const fastify = Fastify({
   maxParamLength: 1000,
+  bodyLimit: 1048576,
   logger: true,
 });
 
-const PORT = Number(process.env.PORT) || 3000;
+// const PORT = Number(process.env.PORT) || 3000;
 
 (async () => {
   await fastify.register(FastifyCors, {
     origin: "*",
     methods: "GET",
   });
+
+  // rate limiting
+  await fastify.register(fastifyRateLimit, {
+    global: true,
+    max: 30,
+    timeWindow: "1 minute",
+    cache: 10000,
+  });
+
+  // rate limit 404 page
+  fastify.setNotFoundHandler(
+    {
+      preHandler: fastify.rateLimit({
+        max: 4,
+        timeWindow: 500,
+      }),
+    },
+    function (_, reply) {
+      reply.code(404).send({ error: "Page Not Found" });
+    }
+  );
 
   // api-key protection in production
   fastify.addHook("preHandler", async (request, reply) => {

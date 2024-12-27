@@ -30,6 +30,7 @@
   "dependencies": {
     "@consumet/extensions": "github:consumet/consumet.ts",
     "@fastify/cors": "^10.0.1",
+    "@fastify/rate-limit": "^10.2.1",
     "@vercel/analytics": "^1.4.1",
     "@vercel/node": "^5.0.0",
     "axios": "^1.7.9",
