@@ -1,4 +1,6 @@
-<p align="center">
-    <img src="https://static.wikia.nocookie.net/jujutsu-kaisen/images/4/4c/Yuji_watching_movies_as_training_%28Anime%29.png/revision/latest?cb=20201108043702"/>
-    <h1 align="center">sofamaxxing</h1>
-</p>
+# sofamaxxing
+
+An API that scrapes information and sources for anime, movies, and TV series.
+The scrapers are built both within the project and sourced from [Consumet](https://github.com/consumet).
+
+The repository is configured to be deployed on Vercel.
