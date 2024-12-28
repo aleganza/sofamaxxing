@@ -1,5 +1,6 @@
 import { FastifyInstance } from "fastify";
 import Zoro from "@consumet/extensions/dist/providers/anime/zoro";
+import { StreamingServers } from "@consumet/extensions";
 
 const zoro = new Zoro();
 
@@ -50,16 +51,22 @@ const routes = async (fastify: FastifyInstance) => {
 
   fastify.get("/episode/:episodeId", async (request, reply) => {
     const { episodeId } = request.params as { episodeId: string };
-  
+
     try {
       const result = await zoro.fetchEpisodeSources(episodeId);
       return reply.status(200).send(result);
     } catch (err) {
-      console.error("Error in fetchSources:", err);
-      return reply.status(500).send({ message: "Internal server error" });
+      try {
+        const fallbackResult = await zoro.fetchEpisodeSources(
+          episodeId,
+          StreamingServers.VidStreaming
+        );
+        return reply.status(200).send(fallbackResult);
+      } catch (fallbackErr) {
+        return reply.status(500).send({ message: "Internal server error" });
+      }
     }
   });
-  
 };
 
 export default routes;
