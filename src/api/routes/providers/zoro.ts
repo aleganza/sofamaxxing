@@ -55,7 +55,7 @@ const routes = async (fastify: FastifyInstance) => {
     try {
       const result = await zoro.fetchEpisodeSources(episodeId);
       return reply.status(200).send(result);
-    } catch (err) {
+    } finally {
       try {
         const fallbackResult = await zoro.fetchEpisodeSources(
           episodeId,
