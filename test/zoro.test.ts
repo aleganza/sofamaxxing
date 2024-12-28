@@ -9,8 +9,8 @@ test("crawl", async () => {
 
   const info = await api.fetchAnimeInfo(id);
   const episodeId = info.episodes ? info.episodes[11].id : '';
-
-  const sources = await api.fetchEpisodeSources(episodeId, StreamingServers.VidStreaming);
+  
+  const sources = await api.fetchEpisodeSources(episodeId);
 
   console.log(sources);
 });

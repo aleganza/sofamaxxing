@@ -55,7 +55,7 @@ const routes = async (fastify: FastifyInstance) => {
     try {
       const result = await zoro.fetchEpisodeSources(episodeId);
       return reply.status(200).send(result);
-    } finally {
+    } catch (err) {
       try {
         const fallbackResult = await zoro.fetchEpisodeSources(
           episodeId,
@@ -63,7 +63,7 @@ const routes = async (fastify: FastifyInstance) => {
         );
         return reply.status(200).send(fallbackResult);
       } catch (fallbackErr) {
-        return reply.status(500).send({ message: fallbackErr });
+        return reply.status(500).send({ message: "Internal server error" });
       }
     }
   });
