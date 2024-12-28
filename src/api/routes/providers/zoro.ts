@@ -63,7 +63,7 @@ const routes = async (fastify: FastifyInstance) => {
         );
         return reply.status(200).send(fallbackResult);
       } catch (fallbackErr) {
-        return reply.status(500).send({ message: "Internal server error" });
+        return reply.status(500).send({ message: fallbackErr });
       }
     }
   });
