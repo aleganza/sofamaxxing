@@ -135,7 +135,11 @@ class AnimeUnity extends Provider {
    */
   override fetchSources = async (episodeId: string): Promise<Sources> => {
     try {
+      console.log(`Fetching episode sources for episode ID: ${episodeId}`);
+
       const res = await axios.get(`${this.baseUrl}/anime/${episodeId}`);
+      console.log(`Fetched data for episode ${episodeId}:`, res.headers);
+
       const $ = load(res.data);
 
       const episodeSources: Sources = {
@@ -143,9 +147,12 @@ class AnimeUnity extends Provider {
       };
 
       const streamUrl = $("video-player").attr("embed_url");
+      console.log("Stream URL:", streamUrl);
 
       if (streamUrl) {
         const res = await axios.get(streamUrl);
+        console.log(`Fetched stream URL ${streamUrl}:`, res.headers);
+
         const $ = load(res.data);
 
         const domain = $('script:contains("window.video")')
@@ -158,21 +165,28 @@ class AnimeUnity extends Provider {
           .text()
           ?.match(/expires': '(.*)'/)![1];
 
-        // secondary data
+        console.log(
+          `Parsed data - domain: ${domain}, token: ${token}, expires: ${expires}`
+        );
+
         const size = Number(
           $('script:contains("window.video")')
             .text()
             ?.match(/"size":(\d+)/)?.[1]
         );
-
         const runtime = Number(
           $('script:contains("window.video")')
             .text()
             ?.match(/"duration":(\d+)/)?.[1]
         );
 
+        console.log(`Video details - size: ${size}KB, runtime: ${runtime}s`);
+
         const defaultUrl = `${domain}${domain.includes("?") ? "&" : "?"}token=${token}&referer=&expires=${expires}&h=1`;
+        console.log("Default URL:", defaultUrl);
+
         const m3u8Content = await axios.get(defaultUrl);
+        console.log(`Fetched m3u8 content for default URL:`, m3u8Content.data);
 
         if (m3u8Content.data.includes("EXTM3U")) {
           const videoList = m3u8Content.data.split("#EXT-X-STREAM-INF:");
@@ -183,6 +197,8 @@ class AnimeUnity extends Provider {
                 .split("RESOLUTION=")[1]
                 .split("\n")[0]
                 .split("x")[1];
+
+              console.log(`Found video URL: ${url}, Quality: ${quality}p`);
 
               episodeSources.sources.push({
                 url: url,
@@ -197,18 +213,25 @@ class AnimeUnity extends Provider {
           url: defaultUrl,
           quality: `default`,
           isM3U8: true,
-          size: size * 1024, // should be retrieved in KBs I guess
+          size: size * 1024, // Convert KB to Bytes
           runtime,
         });
+
+        console.log(
+          `Added default URL with size ${size * 1024} bytes and runtime ${runtime}s`
+        );
 
         episodeSources.download = $('script:contains("window.downloadUrl ")')
           .text()
           ?.match(/downloadUrl = '(.*)'/)![1]
           ?.toString();
+
+        console.log(`Download URL: ${episodeSources.download}`);
       }
 
       return episodeSources;
     } catch (err) {
+      console.error("Error fetching episode sources:", err);
       throw new Error((err as Error).message);
     }
   };
