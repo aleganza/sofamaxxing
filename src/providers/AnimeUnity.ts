@@ -164,6 +164,7 @@ class AnimeUnity extends Provider {
         const res = await axios.get(streamUrl);
 
         const $ = load(res.data);
+        console.log(res.headers)
 
         const domain = $('script:contains("window.video")')
           .text()
@@ -194,6 +195,7 @@ class AnimeUnity extends Provider {
         console.log("Default URL:", defaultUrl);
 
         const m3u8Content = await axios.get(defaultUrl);
+        console.log(res.headers)
 
         if (m3u8Content.data.includes("EXTM3U")) {
           const videoList = m3u8Content.data.split("#EXT-X-STREAM-INF:");
