@@ -2,11 +2,11 @@ import "dotenv/config";
 
 import FastifyCors from "@fastify/cors";
 import Fastify from "fastify";
-
+import chalk from "chalk";
 import animeunity from "./routes/providers/animeunity";
 import anix from "./routes/providers/anix";
 import gogoanime from "./routes/providers/gogoanime";
-import zoro from "./routes/providers/zoro"
+import zoro from "./routes/providers/zoro";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { inject } from "@vercel/analytics";
 import fastifyRateLimit from "@fastify/rate-limit";
@@ -17,7 +17,7 @@ const fastify = Fastify({
   logger: true,
 });
 
-// const PORT = Number(process.env.PORT) || 3000;
+const PORT = Number(process.env.PORT) || 5125;
 
 (async () => {
   await fastify.register(FastifyCors, {
@@ -67,6 +67,43 @@ const fastify = Fastify({
   await fastify.register(gogoanime, { prefix: "/gogoanime" });
   await fastify.register(zoro, { prefix: "/zoro" });
 
+  // proxy
+  fastify.get("/proxy", async (request, reply) => {
+    const { url } = request.query as { url: string };
+
+    if (!url) {
+      return reply.status(400).send({ error: 'Missing "url" query parameter' });
+    }
+
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "User-Agent": request.headers["user-agent"] || "Mozilla/5.0",
+          Cookie: request.headers["cookie"] || "",
+          Accept: request.headers["accept"] || "*/*",
+        },
+      });
+
+      if (!response.ok) {
+        return reply.status(response.status).send({
+          error: `Failed to fetch resource. Status: ${response.status}`,
+        });
+      }
+
+      const data = await response.text();
+
+      reply
+        .status(response.status)
+        .headers(Object.fromEntries(response.headers.entries()))
+        .send(data);
+    } catch (error) {
+      reply
+        .status(500)
+        .send({ error: "Proxy Error", details: (error as Error).message });
+    }
+  });
+
   fastify.get("/", (_, reply) => {
     reply
       .status(200)
@@ -87,6 +124,16 @@ const fastify = Fastify({
       error: "Page Not Found",
     });
   });
+
+  if (process.env.NODE_ENV === "development") {
+    try {
+      await fastify.listen({ port: PORT, host: "0.0.0.0" });
+      console.log(chalk.green(`Server listening on http://localhost:${PORT}`));
+    } catch (err) {
+      fastify.log.error(err);
+      process.exit(1);
+    }
+  }
 })();
 
 export default async (req: VercelRequest, res: VercelResponse) => {
