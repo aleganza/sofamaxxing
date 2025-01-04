@@ -1,7 +1,6 @@
-import { FastifyInstance } from 'fastify';
-import fetch from 'node-fetch';
+import { FastifyInstance } from "fastify";
 
-import AnimeUnity from '../../../providers/AnimeUnity';
+import AnimeUnity from "../../../providers/AnimeUnity";
 
 const animeUnity = new AnimeUnity();
 
@@ -55,35 +54,9 @@ const routes = async (fastify: FastifyInstance) => {
   fastify.get("/episode/*", async (request, reply) => {
     const episodeId = (request.params as any)["*"] as string;
 
-    if (!episodeId) {
-      return reply
-        .status(400)
-        .send({ message: "Episode ID parameter is required." });
-    }
-
-    const url = `${animeUnity.baseUrl}/episode/${episodeId}`;
-
     try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "User-Agent": request.headers["user-agent"] || "Mozilla/5.0",
-          Cookie: request.headers["cookie"] || "",
-        },
-      });
-
-      if (!response.ok) {
-        console.error(`Failed to fetch episode: ${response.statusText}`);
-        return reply
-          .status(response.status)
-          .send({ error: `Failed to fetch resource from ${url}` });
-      }
-
-      const data = await response.text();
-      return reply
-        .status(response.status)
-        .headers(Object.fromEntries(response.headers.entries()))
-        .send(data);
+      const result = await animeUnity.fetchSources(episodeId);
+      return reply.status(200).send(result);
     } catch (err) {
       console.error("Error in fetchSources:", err);
       return reply.status(500).send({ message: "Internal server error" });

@@ -12,7 +12,7 @@ import {
 
 class AnimeUnity extends Provider {
   override readonly name = "AnimeUnity";
-  override baseUrl = "https://www.animeunity.to";
+  override baseUrl = "https://www.animeunity.so";
   languages = "it";
   colorHEX = "#007bff";
   override logo = "https://www.animeunity.to/favicon-32x32.png";
