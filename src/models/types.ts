@@ -66,7 +66,7 @@ export interface Video {
   /**
    * in seconds
    */
-  runtime?: number
+  runtime?: number;
   [x: string]: unknown;
 }
 
@@ -95,7 +95,7 @@ export interface MediaResult {
   id: string;
   title: string;
   image?: string;
-  cover?: string,
+  cover?: string;
   status?: MediaStatus;
   rating?: number;
   format?: MediaFormat;
@@ -120,6 +120,7 @@ export interface MediaInfo extends MediaResult {
 }
 
 export interface Sources {
+  headers?: { [x: string]: string };
   subtitles?: Subtitle[];
   sources: Video[];
   download?: string;

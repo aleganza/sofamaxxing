@@ -135,23 +135,33 @@ class AnimeUnity extends Provider {
    */
   override fetchSources = async (episodeId: string): Promise<Sources> => {
     try {
-      console.log(`Fetching episode sources for episode ID: ${episodeId}`);
-
       const res = await axios.get(`${this.baseUrl}/anime/${episodeId}`);
-      console.log(`Fetched data for episode ${episodeId}:`, res.headers);
 
       const $ = load(res.data);
 
       const episodeSources: Sources = {
+        headers: {},
         sources: [],
       };
 
       const streamUrl = $("video-player").attr("embed_url");
+      const headers0 = res.headers["set-cookie"]
+      const headers1 = res.headers["Cookie"]
+
       console.log("Stream URL:", streamUrl);
+      console.log("set-cookie:", headers0);
+      console.log("Cookie:", headers1);
+
+      if(headers0) {
+        episodeSources.headers!['set-cookie'] = `${headers0.join(",")}`
+      }
+
+      if(headers1) {
+        episodeSources.headers!['Cookie'] = `${headers1.join(",")}`
+      }
 
       if (streamUrl) {
         const res = await axios.get(streamUrl);
-        console.log(`Fetched stream URL ${streamUrl}:`, res.headers);
 
         const $ = load(res.data);
 
@@ -180,13 +190,10 @@ class AnimeUnity extends Provider {
             ?.match(/"duration":(\d+)/)?.[1]
         );
 
-        console.log(`Video details - size: ${size}KB, runtime: ${runtime}s`);
-
         const defaultUrl = `${domain}${domain.includes("?") ? "&" : "?"}token=${token}&referer=&expires=${expires}&h=1`;
         console.log("Default URL:", defaultUrl);
 
         const m3u8Content = await axios.get(defaultUrl);
-        console.log(`Fetched m3u8 content for default URL:`, m3u8Content.data);
 
         if (m3u8Content.data.includes("EXTM3U")) {
           const videoList = m3u8Content.data.split("#EXT-X-STREAM-INF:");
@@ -197,8 +204,6 @@ class AnimeUnity extends Provider {
                 .split("RESOLUTION=")[1]
                 .split("\n")[0]
                 .split("x")[1];
-
-              console.log(`Found video URL: ${url}, Quality: ${quality}p`);
 
               episodeSources.sources.push({
                 url: url,
@@ -217,16 +222,10 @@ class AnimeUnity extends Provider {
           runtime,
         });
 
-        console.log(
-          `Added default URL with size ${size * 1024} bytes and runtime ${runtime}s`
-        );
-
         episodeSources.download = $('script:contains("window.downloadUrl ")')
           .text()
           ?.match(/downloadUrl = '(.*)'/)![1]
           ?.toString();
-
-        console.log(`Download URL: ${episodeSources.download}`);
       }
 
       return episodeSources;
