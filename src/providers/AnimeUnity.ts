@@ -145,26 +145,26 @@ class AnimeUnity extends Provider {
       };
 
       const streamUrl = $("video-player").attr("embed_url");
-      const headers0 = res.headers["set-cookie"]
-      const headers1 = res.headers["Cookie"]
+      // const headers0 = res.headers["set-cookie"]
+      // const headers1 = res.headers["Cookie"]
 
-      console.log("Stream URL:", streamUrl);
-      console.log("set-cookie:", headers0);
-      console.log("Cookie:", headers1);
+      // console.log("Stream URL:", streamUrl);
+      // console.log("set-cookie:", headers0);
+      // console.log("Cookie:", headers1);
 
-      if(headers0) {
-        episodeSources.headers!['set-cookie'] = `${headers0.join(",")}`
-      }
+      // if(headers0) {
+      //   episodeSources.headers!['set-cookie'] = `${headers0.join(",")}`
+      // }
 
-      if(headers1) {
-        episodeSources.headers!['Cookie'] = `${headers1.join(",")}`
-      }
+      // if(headers1) {
+      //   episodeSources.headers!['Cookie'] = `${headers1.join(",")}`
+      // }
 
       if (streamUrl) {
         const res = await axios.get(streamUrl);
 
         const $ = load(res.data);
-        console.log(res.headers)
+        // console.log(res.headers)
 
         const domain = $('script:contains("window.video")')
           .text()
@@ -176,9 +176,9 @@ class AnimeUnity extends Provider {
           .text()
           ?.match(/expires': '(.*)'/)![1];
 
-        console.log(
-          `Parsed data - domain: ${domain}, token: ${token}, expires: ${expires}`
-        );
+        // console.log(
+        //   `Parsed data - domain: ${domain}, token: ${token}, expires: ${expires}`
+        // );
 
         const size = Number(
           $('script:contains("window.video")')
@@ -192,10 +192,10 @@ class AnimeUnity extends Provider {
         );
 
         const defaultUrl = `${domain}${domain.includes("?") ? "&" : "?"}token=${token}&referer=&expires=${expires}&h=1`;
-        console.log("Default URL:", defaultUrl);
+        // console.log("Default URL:", defaultUrl);
 
         const m3u8Content = await axios.get(defaultUrl);
-        console.log(res.headers)
+        // console.log(res.headers)
 
         if (m3u8Content.data.includes("EXTM3U")) {
           const videoList = m3u8Content.data.split("#EXT-X-STREAM-INF:");
