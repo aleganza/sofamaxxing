@@ -1,5 +1,5 @@
 import axios from "axios";
-import { load } from "cheerio";
+const cheerio = require("react-native-cheerio");
 
 import Provider from "../models/provider";
 import {
@@ -71,7 +71,7 @@ class StreamingCommunity extends Provider {
       const res = await axios.get(
         `${this.baseUrl}/titles/${id}/stagione-${season}`
       );
-      const $ = load(res.data);
+      const $ = cheerio.load(res.data);
 
       const data = JSON.parse("" + $("#app").attr("data-page") + "").props;
 
@@ -138,7 +138,7 @@ class StreamingCommunity extends Provider {
       const res = await axios.get(
         `${this.baseUrl}/iframe/${id}?episode_id=${episodeId}&next_episode=1`
       );
-      const $ = load(res.data);
+      const $ = cheerio.load(res.data);
       const url = $("iframe").attr("src");
 
       const episodeSources: Sources = {
@@ -147,9 +147,11 @@ class StreamingCommunity extends Provider {
 
       if (url) {
         const res = await axios.get(url);
-        const $ = load(res.data);
+        const $ = cheerio.load(res.data);
 
-        const scriptContent = $('script:contains("window.video")').text();
+        const scriptContent = $('script:contains("window.video")')
+          .html()
+          .toString();
 
         const domain = scriptContent.match(/url: '(.*)'/)?.[1];
         const token = scriptContent.match(/token': '(.*)'/)?.[1];
