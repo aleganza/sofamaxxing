@@ -1,5 +1,5 @@
 import axios from "axios";
-import { load } from "cheerio";
+const cheerio = require("react-native-cheerio")
 
 import Provider from "../models/provider";
 import {
@@ -23,7 +23,7 @@ class AnimeUnity extends Provider {
   override search = async (query: string): Promise<Search<MediaResult>> => {
     try {
       const res = await axios.get(`${this.baseUrl}/archivio?title=${query}`);
-      const $ = load(res.data);
+      const $ = cheerio.load(res.data);
 
       if (!$) return { results: [] };
 
@@ -72,7 +72,7 @@ class AnimeUnity extends Provider {
 
     try {
       const res = await axios.get(url);
-      const $ = load(res.data);
+      const $ = cheerio.load(res.data);
 
       const totalEpisodes = parseInt(
         $("video-player")?.attr("episodes_count") ?? "0"
@@ -95,7 +95,7 @@ class AnimeUnity extends Provider {
         // alID: $(".banner")?.attr("style")?.split("/")?.pop()?.split("-")[0],
         genres:
           $(".info-wrapper.pt-3.pb-3 small")
-            ?.map((_, element): string => {
+            ?.map((_: any, element: any): string => {
               return $(element).text().replace(",", "").trim();
             })
             .toArray() ?? undefined,
@@ -137,7 +137,7 @@ class AnimeUnity extends Provider {
     try {
       const res = await axios.get(`${this.baseUrl}/anime/${episodeId}`);
 
-      const $ = load(res.data);
+      const $ = cheerio.load(res.data);
 
       const episodeSources: Sources = {
         headers: {},
@@ -145,8 +145,8 @@ class AnimeUnity extends Provider {
       };
 
       const streamUrl = $("video-player").attr("embed_url");
-      // const headers0 = res.headers["set-cookie"]
-      // const headers1 = res.headers["Cookie"]
+      const headers0 = res.headers["set-cookie"]
+      const headers1 = res.headers["Cookie"]
 
       // console.log("Stream URL:", streamUrl);
       // console.log("set-cookie:", headers0);
@@ -163,17 +163,16 @@ class AnimeUnity extends Provider {
       if (streamUrl) {
         const res = await axios.get(streamUrl);
 
-        const $ = load(res.data);
-        // console.log(res.headers)
+        const $ = cheerio.load(res.data);
 
         const domain = $('script:contains("window.video")')
-          .text()
+          .html().toString()
           ?.match(/url: '(.*)'/)![1];
         const token = $('script:contains("window.video")')
-          .text()
+          .html().toString()
           ?.match(/token': '(.*)'/)![1];
         const expires = $('script:contains("window.video")')
-          .text()
+          .html().toString()
           ?.match(/expires': '(.*)'/)![1];
 
         // console.log(
@@ -182,17 +181,17 @@ class AnimeUnity extends Provider {
 
         const size = Number(
           $('script:contains("window.video")')
-            .text()
+            .html().toString()
             ?.match(/"size":(\d+)/)?.[1]
         );
         const runtime = Number(
           $('script:contains("window.video")')
-            .text()
+            .html().toString()
             ?.match(/"duration":(\d+)/)?.[1]
         );
 
         const defaultUrl = `${domain}${domain.includes("?") ? "&" : "?"}token=${token}&referer=&expires=${expires}&h=1`;
-        // console.log("Default URL:", defaultUrl);
+        console.log("Default URL:", defaultUrl);
 
         const m3u8Content = await axios.get(defaultUrl);
         // console.log(res.headers)
@@ -225,7 +224,7 @@ class AnimeUnity extends Provider {
         });
 
         episodeSources.download = $('script:contains("window.downloadUrl ")')
-          .text()
+        .html().toString()
           ?.match(/downloadUrl = '(.*)'/)![1]
           ?.toString();
       }

@@ -35,9 +35,9 @@
     "@vercel/analytics": "^1.4.1",
     "@vercel/node": "^5.0.0",
     "axios": "^1.7.9",
-    "cheerio": "^1.0.0",
     "dotenv": "^16.4.7",
     "fastify": "^5.2.0",
-    "fastify-autoload": "^3.13.0"
+    "fastify-autoload": "^3.13.0",
+    "react-native-cheerio": "^1.0.0-rc.4"
   }
 }
