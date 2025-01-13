@@ -23,7 +23,7 @@ class StreamingCommunity extends Provider {
   languages = ["it", "en"];
   colorHEX = "#018850";
   override logo =
-    "https://streamingcommunity.family/icon/favicon-32x32.png?v=2";
+    "https://streamingcommunity.prof/icon/favicon-32x32.png?v=2";
 
   override async search(
     query: string,

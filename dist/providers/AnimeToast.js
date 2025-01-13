@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
-const cheerio_1 = require("cheerio");
+const cheerio = require("react-native-cheerio");
 const provider_1 = __importDefault(require("../models/provider"));
 const types_1 = require("../models/types");
 class AnimeToast extends provider_1.default {
@@ -29,7 +29,7 @@ class AnimeToast extends provider_1.default {
         return __awaiter(this, arguments, void 0, function* (query, page = 1) {
             try {
                 const res = yield axios_1.default.get(`${this.baseUrl}/page/${page}/?s=${query}`);
-                const $ = (0, cheerio_1.load)(res.data);
+                const $ = cheerio.load(res.data);
                 if (!$)
                     return { results: [] };
                 const pagesSource = $("section.video-listing .wp-pagenavi .pages");
@@ -69,7 +69,7 @@ class AnimeToast extends provider_1.default {
             var _a, _b;
             try {
                 const res = yield axios_1.default.get(`${this.baseUrl}/${id}/?link=0`);
-                const $ = (0, cheerio_1.load)(res.data);
+                const $ = cheerio.load(res.data);
                 // const individualEpisodes
                 const ps = ".single-inbox .item-content p";
                 const info = {
@@ -140,7 +140,7 @@ class AnimeToast extends provider_1.default {
                     const mockPlayerHref = $("#player-embed a").attr("href");
                     const mockId = (_a = mockPlayerHref === null || mockPlayerHref === void 0 ? void 0 : mockPlayerHref.split(`${this.baseUrl}/`)[1].split("-")[0]) !== null && _a !== void 0 ? _a : "";
                     const res2 = yield axios_1.default.get((_b = mockPlayerHref === null || mockPlayerHref === void 0 ? void 0 : mockPlayerHref.replace(mockId, (Number(mockId) + (page - 1) * 2).toString())) !== null && _b !== void 0 ? _b : "");
-                    const $2 = (0, cheerio_1.load)(res2.data);
+                    const $2 = cheerio.load(res2.data);
                     $2(".tab-content .multilink-btn").each((_, el) => {
                         var _a, _b, _c;
                         (_a = info.episodes) === null || _a === void 0 ? void 0 : _a.push({
@@ -174,15 +174,16 @@ class AnimeToast extends provider_1.default {
             var _a;
             try {
                 const res = yield axios_1.default.get(`${this.baseUrl}/${id}`);
-                const $ = (0, cheerio_1.load)(res.data);
+                const $ = cheerio.load(res.data);
                 const playerUrl = (_a = $("#player-embed a").attr("href")) !== null && _a !== void 0 ? _a : "";
                 const res2 = yield axios_1.default.get(playerUrl);
-                const $2 = (0, cheerio_1.load)(res2.data);
+                const $2 = cheerio.load(res2.data);
                 const streamUrl = $2("script")
                     .html()
+                    .toString()
                     .match(/window\.location\.href\s*=\s*['"]([^'"]+)['"]/)[1];
                 const res3 = yield axios_1.default.get(streamUrl);
-                const $3 = (0, cheerio_1.load)(res3.data);
+                const $3 = cheerio.load(res3.data);
                 const episodeSources = {
                     sources: [],
                 };

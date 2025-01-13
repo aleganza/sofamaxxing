@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
-const cheerio_1 = require("cheerio");
+const cheerio = require("react-native-cheerio");
 const provider_1 = __importDefault(require("../models/provider"));
 class AnimeHeaven extends provider_1.default {
     constructor() {
@@ -28,7 +28,7 @@ class AnimeHeaven extends provider_1.default {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const res = yield axios_1.default.get(`${this.baseUrl}/search.php?s=${query}`);
-                const $ = (0, cheerio_1.load)(res.data);
+                const $ = cheerio.load(res.data);
                 if (!$)
                     return { results: [] };
                 const searchResult = {
@@ -58,7 +58,7 @@ class AnimeHeaven extends provider_1.default {
                 const res = yield fetch(`${this.baseUrl}/anime.php?${id}`, {
                     method: "GET",
                 });
-                const $ = (0, cheerio_1.load)(yield res.text());
+                const $ = cheerio.load(yield res.text());
                 const info = {
                     id,
                     hasSeasons: false,
@@ -100,7 +100,7 @@ class AnimeHeaven extends provider_1.default {
                 const res = yield fetch(`${this.baseUrl}/episode.php?${id}`, {
                     method: "GET",
                 });
-                const $ = (0, cheerio_1.load)(yield res.text());
+                const $ = cheerio.load(yield res.text());
                 const episodeSources = {
                     sources: [],
                 };

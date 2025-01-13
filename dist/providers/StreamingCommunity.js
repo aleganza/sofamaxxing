@@ -25,7 +25,7 @@ class StreamingCommunity extends provider_1.default {
         this.CDNUrl = "https://cdn.streamingcommunity.photos/images";
         this.languages = ["it", "en"];
         this.colorHEX = "#018850";
-        this.logo = "https://streamingcommunity.family/icon/favicon-32x32.png?v=2";
+        this.logo = "https://streamingcommunity.prof/icon/favicon-32x32.png?v=2";
         this.fetchInfo = (id_1, ...args_1) => __awaiter(this, [id_1, ...args_1], void 0, function* (id, season = 1) {
             var _a, _b, _c, _d, _e;
             try {

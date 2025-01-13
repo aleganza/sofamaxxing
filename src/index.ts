@@ -1,23 +1,24 @@
-import AnimeUnity from "./providers/AnimeUnity";
-import AnimeHeaven from "./providers/AnimeHeaven";
-import AnimeToast from "./providers/AnimeToast";
-import StreamingCommunity from "./providers/StreamingCommunity";
-import TokyoInsider from "./providers/TokyoInsider";
+import Provider from './models/provider';
 import {
-  MediaStatus,
-  MediaFormat,
-  SubOrDub,
-  Images,
   FuzzyDate,
+  Images,
+  MediaEpisode,
+  MediaFormat,
+  MediaInfo,
+  MediaResult,
   MediaSeason,
+  MediaStatus,
+  Search,
+  Sources,
+  SubOrDub,
   Subtitle,
   Video,
-  MediaEpisode,
-  Search,
-  MediaResult,
-  MediaInfo,
-  Sources,
-} from "./models/types";
+} from './models/types';
+import AnimeHeaven from './providers/AnimeHeaven';
+import AnimeToast from './providers/AnimeToast';
+import AnimeUnity from './providers/AnimeUnity';
+import StreamingCommunity from './providers/StreamingCommunity';
+import TokyoInsider from './providers/TokyoInsider';
 
 export {
   AnimeUnity,
@@ -38,4 +39,5 @@ export {
   MediaResult,
   MediaInfo,
   Sources,
+  Provider,
 };

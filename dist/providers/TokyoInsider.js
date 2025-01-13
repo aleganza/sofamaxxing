@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
-const cheerio_1 = require("cheerio");
+const cheerio = require("react-native-cheerio");
 const provider_1 = __importDefault(require("../models/provider"));
 const tokyoinsider_1 = require("../modules/utils/tokyoinsider");
 class TokyoInsider extends provider_1.default {
@@ -29,7 +29,7 @@ class TokyoInsider extends provider_1.default {
         return __awaiter(this, arguments, void 0, function* (query, page = 1) {
             try {
                 const res = yield axios_1.default.get(`${this.baseUrl}/anime/search?k=${query}&start=${(page - 1) * 20}`);
-                const $ = (0, cheerio_1.load)(res.data);
+                const $ = cheerio.load(res.data);
                 if (!$)
                     return { results: [] };
                 const pager = $(".pager");
@@ -65,7 +65,7 @@ class TokyoInsider extends provider_1.default {
             var _a, _b, _c, _d, _e, _f, _g, _h;
             try {
                 const res = yield axios_1.default.get(`${this.baseUrl}/anime/${id}`);
-                const $ = (0, cheerio_1.load)(res.data);
+                const $ = cheerio.load(res.data);
                 const tableRow = (eq) => $("#inner_page table")
                     .first()
                     .find("tbody tr td")
@@ -113,7 +113,7 @@ class TokyoInsider extends provider_1.default {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const res = yield axios_1.default.get(`${this.baseUrl}/anime/${id}`);
-                const $ = (0, cheerio_1.load)(res.data);
+                const $ = cheerio.load(res.data);
                 const sourcesDivs = $("#inner_page .c_h2, #inner_page .c_h2b");
                 const extractSource = (eq) => sourcesDivs.eq(eq).find("div").first().find("a").last().attr("href");
                 const episodeSources = {

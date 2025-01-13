@@ -1,5 +1,4 @@
-import { StreamingServers } from "@consumet/extensions";
-import Zoro from "@consumet/extensions/dist/providers/anime/zoro";
+import Zoro from '@consumet/extensions/dist/providers/anime/zoro';
 
 test("crawl", async () => {
   const api = new Zoro();

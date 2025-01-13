@@ -1,5 +1,5 @@
 import axios from "axios";
-import { load } from "cheerio";
+const cheerio = require("react-native-cheerio");
 
 import Provider from "../models/provider";
 import { MediaInfo, MediaResult, Search, Sources } from "../models/types";
@@ -14,7 +14,7 @@ class AnimeHeaven extends Provider {
   override async search(query: string): Promise<Search<MediaResult>> {
     try {
       const res = await axios.get(`${this.baseUrl}/search.php?s=${query}`);
-      const $ = load(res.data);
+      const $ = cheerio.load(res.data);
 
       if (!$) return { results: [] };
 
@@ -26,7 +26,7 @@ class AnimeHeaven extends Provider {
         results: [],
       };
 
-      $(".similarimg").each((_, el) => {
+      $(".similarimg").each((_: any, el: any) => {
         searchResult.results.push({
           id: $(el)?.find("a")?.attr("href")?.split("anime.php?")[1] ?? "",
           title: $(el)?.find(".similarname.c a.c")?.text().trim(),
@@ -46,7 +46,7 @@ class AnimeHeaven extends Provider {
       const res = await fetch(`${this.baseUrl}/anime.php?${id}`, {
         method: "GET",
       });
-      const $ = load(await res.text());
+      const $ = cheerio.load(await res.text());
 
       const info: MediaInfo = {
         id,
@@ -54,7 +54,7 @@ class AnimeHeaven extends Provider {
         title: $(".infotitle.c")?.text().trim(),
         description: $(".infodes.c")?.text().trim(),
         genres: $("boxitem.bc2.c1")
-          .map((_, el) => $(el).text().trim())
+          .map((_: any, el: any) => $(el).text().trim())
           .get(),
         totalEpisodes: parseInt($($(".inline.c2")[0]).text().trim()),
         releaseDate: {
@@ -68,7 +68,7 @@ class AnimeHeaven extends Provider {
         episodes: [],
       };
 
-      $(".ac3").each((_, el) => {
+      $(".ac3").each((_: any, el: any) => {
         info.episodes?.push({
           id: $(el).attr("href")?.split("episode.php?")[1] ?? "",
           number: parseFloat($(el).find(".watch2.bc").text().trim()),
@@ -87,7 +87,7 @@ class AnimeHeaven extends Provider {
       const res = await fetch(`${this.baseUrl}/episode.php?${id}`, {
         method: "GET",
       });
-      const $ = load(await res.text());
+      const $ = cheerio.load(await res.text());
 
       const episodeSources: Sources = {
         sources: [],

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { load } from "cheerio";
+const cheerio = require("react-native-cheerio");
 
 import Provider from "../models/provider";
 import { MediaInfo, MediaResult, Search, Sources } from "../models/types";
@@ -17,7 +17,7 @@ class TokyoInsider extends Provider {
       const res = await axios.get(
         `${this.baseUrl}/anime/search?k=${query}&start=${(page - 1) * 20}`
       );
-      const $ = load(res.data);
+      const $ = cheerio.load(res.data);
 
       if (!$) return { results: [] };
 
@@ -37,7 +37,7 @@ class TokyoInsider extends Provider {
       const table = $(
         'table[width="100%"][border="0"][cellspacing="0"][cellpadding="3"]'
       );
-      table.find("tr").each((_, el) => {
+      table.find("tr").each((_: any, el: any) => {
         const col1 = $(el)?.find("td")?.eq(0);
         const col2 = $(el)?.find("td")?.eq(1);
 
@@ -57,7 +57,7 @@ class TokyoInsider extends Provider {
   async fetchInfo(id: string): Promise<MediaInfo> {
     try {
       const res = await axios.get(`${this.baseUrl}/anime/${id}`);
-      const $ = load(res.data);
+      const $ = cheerio.load(res.data);
 
       const tableRow = (eq: number) =>
         $("#inner_page table")
@@ -81,7 +81,7 @@ class TokyoInsider extends Provider {
         totalEpisodes,
         genres: tableRow(2)
           ?.find("a")
-          ?.map((_, el) => $(el)?.text().trim())
+          ?.map((_: any, el: any) => $(el)?.text().trim())
           .get(),
         releaseDate: {
           year: Number(tableRow(4).text()?.split(", ")[1]),
@@ -96,12 +96,12 @@ class TokyoInsider extends Provider {
         synonyms: tableRow(0)
           ?.html()
           ?.split("<br>")
-          .map((title) => title.trim())
-          .filter((title) => title !== ""),
+          .map((title: string) => title.trim())
+          .filter((title: string) => title !== ""),
         episodes: [],
       };
 
-      episodesDivs.each((_, el) => {
+      episodesDivs.each((_: any, el: any) => {
         info.episodes?.push({
           id: $(el).find("a").attr("href")?.split("/anime/")[1] ?? "",
           number: Number($(el).find("a strong").text().trim()),
@@ -117,7 +117,7 @@ class TokyoInsider extends Provider {
   async fetchSources(id: string): Promise<Sources> {
     try {
       const res = await axios.get(`${this.baseUrl}/anime/${id}`);
-      const $ = load(res.data);
+      const $ = cheerio.load(res.data);
 
       const sourcesDivs = $("#inner_page .c_h2, #inner_page .c_h2b");
       const extractSource = (eq: number) =>
@@ -129,7 +129,7 @@ class TokyoInsider extends Provider {
       };
 
       let foundFirst = false;
-      sourcesDivs.each((i) => {
+      sourcesDivs.each((i: number) => {
         const s = extractSource(i);
         if (s && s?.includes(".mp4")) {
           episodeSources.sources.push({

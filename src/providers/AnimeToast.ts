@@ -1,5 +1,5 @@
 import axios from "axios";
-import { load } from "cheerio";
+const cheerio = require("react-native-cheerio");
 
 import Provider from "../models/provider";
 import {
@@ -21,7 +21,7 @@ class AnimeToast extends Provider {
   async search(query: string, page: number = 1): Promise<Search<MediaResult>> {
     try {
       const res = await axios.get(`${this.baseUrl}/page/${page}/?s=${query}`);
-      const $ = load(res.data);
+      const $ = cheerio.load(res.data);
 
       if (!$) return { results: [] };
 
@@ -38,7 +38,7 @@ class AnimeToast extends Provider {
         results: [],
       };
 
-      $("div.blog-item:not([id])").each((_, el) => {
+      $("div.blog-item:not([id])").each((_: any, el: any) => {
         searchResult.results.push({
           id:
             $(el)
@@ -67,7 +67,7 @@ class AnimeToast extends Provider {
   async fetchInfo(id: string, page: number = 1): Promise<MediaInfo> {
     try {
       const res = await axios.get(`${this.baseUrl}/${id}/?link=0`);
-      const $ = load(res.data);
+      const $ = cheerio.load(res.data);
 
       // const individualEpisodes
       const ps = ".single-inbox .item-content p";
@@ -81,7 +81,7 @@ class AnimeToast extends Provider {
         description: $(ps).first().text().trim(),
         cover: $(ps).first().find("img").attr("src"),
         genres: $(ps)
-          .filter((_, p) => $(p).find("strong").text().trim() === "Genre:")
+          .filter((_: any, p: any) => $(p).find("strong").text().trim() === "Genre:")
           .contents()
           .not("strong")
           .text()
@@ -91,7 +91,7 @@ class AnimeToast extends Provider {
           year: Number(
             $(ps)
               .filter(
-                (_, p) => $(p).find("strong").text().trim() === "Season Start:"
+                (_: any, p: any) => $(p).find("strong").text().trim() === "Season Start:"
               )
               .contents()
               .not("strong")
@@ -106,15 +106,15 @@ class AnimeToast extends Provider {
 
       const link = $("ul.nav.nav-tabs")
         .find("li:has(a) a")
-        .filter((_, a) => $(a).text().trim() === "Voe")
+        .filter((_: any, a: any) => $(a).text().trim() === "Voe")
         .attr("href");
       const btns = $(link).find("a");
       const epBtns = btns.filter(
-        (_, el) => !$(el).text().includes("S") && !$(el).text().includes("-")
+        (_: any, el: any) => !$(el).text().includes("S") && !$(el).text().includes("-")
       );
       const hasPages = btns
         .toArray()
-        .some((el) => $(el).text().includes("S") || $(el).text().includes("-"));
+        .some((el: any) => $(el).text().includes("S") || $(el).text().includes("-"));
 
       let totalPages;
 
@@ -125,7 +125,7 @@ class AnimeToast extends Provider {
         if (page < 1 || page > totalPages)
           throw new Error(`Argument 'page' for ${id} must be 1!`);
 
-        epBtns.each((_, el) => {
+        epBtns.each((_: any, el: any) => {
           info.episodes?.push({
             id: $(el).attr("href")?.split(`${this.baseUrl}/`)[1] ?? "",
             number: Number($(el).text().trim().split("Ep. ")[1]),
@@ -140,9 +140,9 @@ class AnimeToast extends Provider {
       // there may be invididual links too, like `E1100`  (eBtns)
       // each page link is a page + all the individual is the last page
 
-      const hypehenBtns = btns.filter((_, el) => $(el).text().includes("-"));
+      const hypehenBtns = btns.filter((_: any, el: any) => $(el).text().includes("-"));
       const eBtns = btns.filter(
-        (_, el) => $(el).text().includes("E") && !$(el).text().includes("-")
+        (_: any, el: any) => $(el).text().includes("E") && !$(el).text().includes("-")
       );
       totalPages = hypehenBtns.length;
       if (eBtns.length > 0) totalPages++;
@@ -164,9 +164,9 @@ class AnimeToast extends Provider {
             (Number(mockId) + (page - 1) * 2).toString()
           ) ?? ""
         );
-        const $2 = load(res2.data);
+        const $2 = cheerio.load(res2.data);
 
-        $2(".tab-content .multilink-btn").each((_, el) => {
+        $2(".tab-content .multilink-btn").each((_: any, el: any) => {
           info.episodes?.push({
             id: $(el).attr("href")?.split(`${this.baseUrl}/`)[1] ?? "",
             number: Number(
@@ -176,7 +176,7 @@ class AnimeToast extends Provider {
         });
       } else {
         // page with eBtn (last page) if exists
-        eBtns.each((_, el) => {
+        eBtns.each((_: any, el: any) => {
           info.episodes?.push({
             id: $(el).attr("href")?.split(`${this.baseUrl}/`)[1] ?? "",
             number: Number(
@@ -199,28 +199,29 @@ class AnimeToast extends Provider {
   async fetchSources(id: string): Promise<Sources> {
     try {
       const res = await axios.get(`${this.baseUrl}/${id}`);
-      const $ = load(res.data);
+      const $ = cheerio.load(res.data);
 
       const playerUrl = $("#player-embed a").attr("href") ?? "";
       const res2 = await axios.get(playerUrl);
-      const $2 = load(res2.data);
+      const $2 = cheerio.load(res2.data);
 
       const streamUrl = $2("script")
         .html()!
+        .toString()
         .match(/window\.location\.href\s*=\s*['"]([^'"]+)['"]/)![1];
       const res3 = await axios.get(streamUrl);
-      const $3 = load(res3.data);
+      const $3 = cheerio.load(res3.data);
 
       const episodeSources: Sources = {
         sources: [],
       };
 
-      $3("script").each((_, script) => {
+      $3("script").each((_: any, script: any) => {
         const scriptContent = $3(script).html();
         if (scriptContent?.includes("DOMContentLoaded")) {
           const urls = scriptContent
             .match(/\/\/ https[^\n]*/g)
-            ?.map((s) => s.replace("//", "").trim());
+            ?.map((s: string) => s.replace("//", "").trim());
 
           if (urls) {
             episodeSources.sources.push({
