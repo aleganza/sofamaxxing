@@ -1,29 +1,19 @@
-import axios from "axios";
-const cheerio = require("react-native-cheerio");
+import axios from 'axios';
 
-import Provider from "../models/provider";
-import {
-  MediaEpisode,
-  MediaInfo,
-  MediaResult,
-  MediaSeason,
-  Search,
-  Sources,
-  SubOrDub,
-} from "../models/types";
-import {
-  parseFuzzyDate,
-  parseImages,
-} from "../modules/utils/streamingcommunity";
+import Provider from '../models/provider';
+import { MediaEpisode, MediaInfo, MediaResult, MediaSeason, Search, Sources, SubOrDub } from '../models/types';
+import { parseFuzzyDate, parseImages } from '../modules/utils/streamingcommunity';
+
+const cheerio = require("react-native-cheerio");
 
 class StreamingCommunity extends Provider {
   override readonly name = "StreamingCommunity";
-  override baseUrl = "https://streamingcommunity.prof"; /*family broken*/
+  override baseUrl = "https://streamingcommunity.paris";
   override CDNUrl = "https://cdn.streamingcommunity.photos/images";
   languages = ["it", "en"];
   colorHEX = "#018850";
-  override logo =
-    "https://streamingcommunity.prof/icon/favicon-32x32.png?v=2";
+  override logo = `${this.baseUrl}/icon/favicon-32x32.png?v=2`;
+  override readonly forRN: boolean = true
 
   override async search(
     query: string,

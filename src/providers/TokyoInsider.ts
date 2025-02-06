@@ -11,6 +11,7 @@ class TokyoInsider extends Provider {
   languages = "en";
   colorHEX = "#f568cf";
   override logo = "https://www.tokyoinsider.com/favicon.ico";
+  override readonly forRN: boolean = true
 
   async search(query: string, page: number = 1): Promise<Search<MediaResult>> {
     try {

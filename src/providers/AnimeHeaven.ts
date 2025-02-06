@@ -10,6 +10,7 @@ class AnimeHeaven extends Provider {
   languages = "en";
   colorHEX = "#e81e2f";
   override logo = "https://animeheaven.me/favicon.ico";
+  override readonly forRN: boolean = true
 
   override async search(query: string): Promise<Search<MediaResult>> {
     try {

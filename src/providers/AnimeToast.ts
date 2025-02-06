@@ -1,14 +1,9 @@
-import axios from "axios";
-const cheerio = require("react-native-cheerio");
+import axios from 'axios';
 
-import Provider from "../models/provider";
-import {
-  MediaInfo,
-  MediaResult,
-  Search,
-  Sources,
-  SubOrDub,
-} from "../models/types";
+import Provider from '../models/provider';
+import { MediaInfo, MediaResult, Search, Sources, SubOrDub } from '../models/types';
+
+const cheerio = require("react-native-cheerio");
 
 class AnimeToast extends Provider {
   override readonly name = "AnimeToast";
@@ -17,6 +12,7 @@ class AnimeToast extends Provider {
   colorHEX = "#694ba1";
   override logo =
     "https://www.animetoast.cc/wp-content/uploads/2018/03/toastfavi-300x300.png";
+  override readonly forRN: boolean = true
 
   async search(query: string, page: number = 1): Promise<Search<MediaResult>> {
     try {

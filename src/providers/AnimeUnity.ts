@@ -1,14 +1,9 @@
-import axios from "axios";
-const cheerio = require("react-native-cheerio")
+import axios from 'axios';
 
-import Provider from "../models/provider";
-import {
-  MediaInfo,
-  MediaResult,
-  Search,
-  Sources,
-  SubOrDub,
-} from "../models/types";
+import Provider from '../models/provider';
+import { MediaInfo, MediaResult, Search, Sources, SubOrDub } from '../models/types';
+
+const cheerio = require("react-native-cheerio")
 
 class AnimeUnity extends Provider {
   override readonly name = "AnimeUnity";
@@ -16,6 +11,7 @@ class AnimeUnity extends Provider {
   languages = "it";
   colorHEX = "#007bff";
   override logo = "https://www.animeunity.to/favicon-32x32.png";
+  override readonly forRN: boolean = true
 
   /**
    * @param query Search query
