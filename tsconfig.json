@@ -17,5 +17,5 @@
   "include": [
     "src/**/*.ts"                      // Includi tutti i file TypeScript in `src`
   ],
-  "exclude": ["node_modules", "dist", "src/api"]  // Escludi queste cartelle
+  "exclude": ["node_modules", "dist"]  // Escludi queste cartelle
 }
