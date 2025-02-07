@@ -15,6 +15,10 @@ class StreamingCommunity extends Provider {
   override logo = `${this.baseUrl}/icon/favicon-32x32.png?v=2`;
   override readonly forRN: boolean = true
 
+  constructor(customBaseURL?: string) {
+    super(customBaseURL);
+  }
+  
   override async search(
     query: string,
     page: number = 1

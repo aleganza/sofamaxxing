@@ -14,6 +14,10 @@ class AnimeToast extends Provider {
     "https://www.animetoast.cc/wp-content/uploads/2018/03/toastfavi-300x300.png";
   override readonly forRN: boolean = true
 
+  constructor(customBaseURL?: string) {
+    super(customBaseURL);
+  }
+
   async search(query: string, page: number = 1): Promise<Search<MediaResult>> {
     try {
       const res = await axios.get(`${this.baseUrl}/page/${page}/?s=${query}`);

@@ -1,9 +1,10 @@
 import { Search, MediaResult, MediaInfo, Sources } from "./types";
+import { UnifiedMediaInfo, UnifiedMediaResult, UnifiedSearch, UnifiedSources } from "./unifiedTypes";
 
 abstract class Provider {
   abstract readonly name: string;
 
-  abstract baseUrl: string;
+  baseUrl: string = "";
 
   readonly CDNUrl: string | null = null;
 
@@ -20,11 +21,20 @@ abstract class Provider {
    */
   abstract readonly forRN: boolean
 
-  abstract search(query: string, ...args: any): Promise<Search<MediaResult>>;
+  constructor(customBaseURL?: string) {
+    if (customBaseURL) {
+      if (!customBaseURL.startsWith("https://")) {
+        throw new Error(`Invalid URL: "${customBaseURL}". The base URL must start with "https://".`);
+      }
+      this.baseUrl = customBaseURL;
+    }
+  }
 
-  abstract fetchInfo(id: string | number, ...args: any): Promise<MediaInfo>;
+  abstract search(query: string, ...args: any): Promise<UnifiedSearch<UnifiedMediaResult>>;
 
-  abstract fetchSources(id: string | number, ...args: any): Promise<Sources>;
+  abstract fetchInfo(id: string | number, ...args: any): Promise<UnifiedMediaInfo>;
+
+  abstract fetchSources(id: string | number, ...args: any): Promise<UnifiedSources>;
 }
 
 export default Provider;

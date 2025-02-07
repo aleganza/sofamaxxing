@@ -12,6 +12,10 @@ class AnimeUnity extends Provider {
   colorHEX = "#007bff";
   override logo = "https://www.animeunity.to/favicon-32x32.png";
   override readonly forRN: boolean = true
+  
+  constructor(customBaseURL?: string) {
+    super(customBaseURL);
+  }
 
   /**
    * @param query Search query

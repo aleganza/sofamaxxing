@@ -12,6 +12,10 @@ class AnimeHeaven extends Provider {
   override logo = "https://animeheaven.me/favicon.ico";
   override readonly forRN: boolean = true
 
+  constructor(customBaseURL?: string) {
+    super(customBaseURL);
+  }
+
   override async search(query: string): Promise<Search<MediaResult>> {
     try {
       const res = await axios.get(`${this.baseUrl}/search.php?s=${query}`);

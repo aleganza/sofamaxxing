@@ -1,6 +1,3 @@
-import { Cheerio, CheerioAPI } from "cheerio";
-import { Element } from "domhandler";
-
 export const MONTHS: { [key: string]: number } = {
   January: 1,
   February: 2,

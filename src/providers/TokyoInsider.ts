@@ -1,9 +1,10 @@
-import axios from "axios";
-const cheerio = require("react-native-cheerio");
+import axios from 'axios';
 
-import Provider from "../models/provider";
-import { MediaInfo, MediaResult, Search, Sources } from "../models/types";
-import { MONTHS } from "../modules/utils/tokyoinsider";
+import Provider from '../models/provider';
+import { MediaInfo, MediaResult, Search, Sources } from '../models/types';
+import { MONTHS } from '../modules/utils/tokyoinsider';
+
+const cheerio = require("react-native-cheerio");
 
 class TokyoInsider extends Provider {
   override readonly name = "TokyoInsider";
@@ -12,6 +13,10 @@ class TokyoInsider extends Provider {
   colorHEX = "#f568cf";
   override logo = "https://www.tokyoinsider.com/favicon.ico";
   override readonly forRN: boolean = true
+
+  constructor(customBaseURL?: string) {
+    super(customBaseURL);
+  }
 
   async search(query: string, page: number = 1): Promise<Search<MediaResult>> {
     try {

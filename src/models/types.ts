@@ -82,12 +82,12 @@ export interface MediaEpisode {
   [x: string]: unknown;
 }
 
-export interface Search<MediaResult> {
+export interface Search<T> {
   currentPage?: number;
   hasNextPage?: boolean;
   totalPages?: number;
   totalResults?: number;
-  results: MediaResult[];
+  results: T[];
   [x: string]: unknown;
 }
 
