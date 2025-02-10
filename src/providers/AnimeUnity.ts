@@ -1,9 +1,15 @@
-import axios from 'axios';
+import HttpClient from "../models/http-client";
 
-import Provider from '../models/provider';
-import { MediaInfo, MediaResult, Search, Sources, SubOrDub } from '../models/types';
+import Provider from "../models/provider";
+import {
+  MediaInfo,
+  MediaResult,
+  Search,
+  Sources,
+  SubOrDub,
+} from "../models/types";
 
-const cheerio = require("react-native-cheerio")
+const cheerio = require("react-native-cheerio");
 
 class AnimeUnity extends Provider {
   override readonly name = "AnimeUnity";
@@ -11,18 +17,23 @@ class AnimeUnity extends Provider {
   languages = "it";
   colorHEX = "#007bff";
   override logo = "https://www.animeunity.to/favicon-32x32.png";
-  override readonly forRN: boolean = true
-  
+  override readonly forRN: boolean = true;
+
+  private httpClient: HttpClient;
+
   constructor(customBaseURL?: string) {
     super(customBaseURL);
+    this.httpClient = new HttpClient(this.baseUrl);
   }
 
-  /**
-   * @param query Search query
-   */
   override search = async (query: string): Promise<Search<MediaResult>> => {
     try {
-      const res = await axios.get(`${this.baseUrl}/archivio?title=${query}`);
+      const res = await this.httpClient.get(`/archivio?title=${query}`, {
+        headers: {
+          Referer: this.baseUrl,
+        },
+      });
+
       const $ = cheerio.load(res.data);
 
       if (!$) return { results: [] };
@@ -56,10 +67,6 @@ class AnimeUnity extends Provider {
     }
   };
 
-  /**
-   * @param id Anime id
-   * @param page Page number
-   */
   override fetchInfo = async (
     id: string,
     page: number = 1
@@ -71,7 +78,8 @@ class AnimeUnity extends Provider {
     const url2 = `${this.baseUrl}/info_api/${id}/1?start_range=${firstPageEpisode}&end_range=${lastPageEpisode}`;
 
     try {
-      const res = await axios.get(url);
+      // Richiesta alla pagina dell'anime
+      const res = await this.httpClient.get(url);
       const $ = cheerio.load(res.data);
 
       const totalEpisodes = parseInt(
@@ -91,8 +99,6 @@ class AnimeUnity extends Provider {
         id: id,
         hasSeasons: false,
         title: $("h1.title")?.text().trim(),
-        // url: url,
-        // alID: $(".banner")?.attr("style")?.split("/")?.pop()?.split("-")[0],
         genres:
           $(".info-wrapper.pt-3.pb-3 small")
             ?.map((_: any, element: any): string => {
@@ -108,11 +114,7 @@ class AnimeUnity extends Provider {
         episodes: [],
       };
 
-      // fetch episodes method 1 (only first page can be fetchedd)
-      // const items = JSON.parse("" + $('video-player').attr('episodes') + "")
-
-      // fetch episodes method 2 (all pages can be fetched)
-      const res2 = await axios.get(url2);
+      const res2 = (await this.httpClient.get(url2)) as any;
       const items = res2.data.episodes;
 
       for (const i in items) {
@@ -129,13 +131,11 @@ class AnimeUnity extends Provider {
     }
   };
 
-  /**
-   *
-   * @param episodeId Episode id
-   */
   override fetchSources = async (episodeId: string): Promise<Sources> => {
     try {
-      const res = await axios.get(`${this.baseUrl}/anime/${episodeId}`);
+      const res = await this.httpClient.get(
+        `${this.baseUrl}/anime/${episodeId}`
+      );
 
       const $ = cheerio.load(res.data);
 
@@ -145,56 +145,40 @@ class AnimeUnity extends Provider {
       };
 
       const streamUrl = $("video-player").attr("embed_url");
-      const headers0 = res.headers["set-cookie"]
-      const headers1 = res.headers["Cookie"]
-
-      // console.log("Stream URL:", streamUrl);
-      // console.log("set-cookie:", headers0);
-      // console.log("Cookie:", headers1);
-
-      // if(headers0) {
-      //   episodeSources.headers!['set-cookie'] = `${headers0.join(",")}`
-      // }
-
-      // if(headers1) {
-      //   episodeSources.headers!['Cookie'] = `${headers1.join(",")}`
-      // }
 
       if (streamUrl) {
-        const res = await axios.get(streamUrl);
-
+        const res = await this.httpClient.get(streamUrl);
         const $ = cheerio.load(res.data);
 
         const domain = $('script:contains("window.video")')
-          .html().toString()
+          .html()
+          .toString()
           ?.match(/url: '(.*)'/)![1];
         const token = $('script:contains("window.video")')
-          .html().toString()
+          .html()
+          .toString()
           ?.match(/token': '(.*)'/)![1];
         const expires = $('script:contains("window.video")')
-          .html().toString()
+          .html()
+          .toString()
           ?.match(/expires': '(.*)'/)![1];
-
-        // console.log(
-        //   `Parsed data - domain: ${domain}, token: ${token}, expires: ${expires}`
-        // );
 
         const size = Number(
           $('script:contains("window.video")')
-            .html().toString()
+            .html()
+            .toString()
             ?.match(/"size":(\d+)/)?.[1]
         );
         const runtime = Number(
           $('script:contains("window.video")')
-            .html().toString()
+            .html()
+            .toString()
             ?.match(/"duration":(\d+)/)?.[1]
         );
 
         const defaultUrl = `${domain}${domain.includes("?") ? "&" : "?"}token=${token}&referer=&expires=${expires}&h=1`;
-        console.log("Default URL:", defaultUrl);
 
-        const m3u8Content = await axios.get(defaultUrl);
-        // console.log(res.headers)
+        const m3u8Content = (await this.httpClient.get(defaultUrl)) as any;
 
         if (m3u8Content.data.includes("EXTM3U")) {
           const videoList = m3u8Content.data.split("#EXT-X-STREAM-INF:");
@@ -219,12 +203,13 @@ class AnimeUnity extends Provider {
           url: defaultUrl,
           quality: `default`,
           isM3U8: true,
-          size: size * 1024, // Convert KB to Bytes
+          size: size * 1024,
           runtime,
         });
 
         episodeSources.download = $('script:contains("window.downloadUrl ")')
-        .html().toString()
+          .html()
+          .toString()
           ?.match(/downloadUrl = '(.*)'/)![1]
           ?.toString();
       }

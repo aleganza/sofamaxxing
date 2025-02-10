@@ -66,43 +66,6 @@ const PORT = Number(process.env.PORT) || 5125;
   await fastify.register(gogoanime, { prefix: "/gogoanime" });
   await fastify.register(zoro, { prefix: "/zoro" });
 
-  // proxy
-  fastify.get("/proxy", async (request, reply) => {
-    const { url } = request.query as { url: string };
-
-    if (!url) {
-      return reply.status(400).send({ error: 'Missing "url" query parameter' });
-    }
-
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "User-Agent": request.headers["user-agent"] || "Mozilla/5.0",
-          Cookie: request.headers["cookie"] || "",
-          Accept: request.headers["accept"] || "*/*",
-        },
-      });
-
-      if (!response.ok) {
-        return reply.status(response.status).send({
-          error: `Failed to fetch resource. Status: ${response.status}`,
-        });
-      }
-
-      const data = await response.text();
-
-      reply
-        .status(response.status)
-        .headers(Object.fromEntries(response.headers.entries()))
-        .send(data);
-    } catch (error) {
-      reply
-        .status(500)
-        .send({ error: "Proxy Error", details: (error as Error).message });
-    }
-  });
-
   fastify.get("/", (_, reply) => {
     reply
       .status(200)
