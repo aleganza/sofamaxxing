@@ -8,6 +8,7 @@ import anix from "./routes/providers/anix";
 import gogoanime from "./routes/providers/gogoanime";
 import zoro from "./routes/providers/zoro";
 import animeparadise from "./routes/providers/animeparadise";
+import aniplay from "./routes/providers/aniplay";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import fastifyRateLimit from "@fastify/rate-limit";
 
@@ -67,6 +68,7 @@ const PORT = Number(process.env.PORT) || 5125;
   await fastify.register(gogoanime, { prefix: "/gogoanime" });
   await fastify.register(zoro, { prefix: "/zoro" });
   await fastify.register(animeparadise, { prefix: "/animeparadise" });
+  await fastify.register(aniplay, { prefix: "/aniplay" });
 
   fastify.get("/", (_, reply) => {
     reply
@@ -84,6 +86,7 @@ const PORT = Number(process.env.PORT) || 5125;
         "/gogoanime",
         "/zoro",
         "/animeparadise",
+        "/aniplay",
       ],
     });
   });
