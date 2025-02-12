@@ -20,6 +20,8 @@ const animeunity_1 = __importDefault(require("./routes/providers/animeunity"));
 const anix_1 = __importDefault(require("./routes/providers/anix"));
 const gogoanime_1 = __importDefault(require("./routes/providers/gogoanime"));
 const zoro_1 = __importDefault(require("./routes/providers/zoro"));
+const animeparadise_1 = __importDefault(require("./routes/providers/animeparadise"));
+const aniplay_1 = __importDefault(require("./routes/providers/aniplay"));
 const rate_limit_1 = __importDefault(require("@fastify/rate-limit"));
 const fastify = (0, fastify_1.default)({
     maxParamLength: 1000,
@@ -65,38 +67,8 @@ const PORT = Number(process.env.PORT) || 5125;
     yield fastify.register(anix_1.default, { prefix: "/anix" });
     yield fastify.register(gogoanime_1.default, { prefix: "/gogoanime" });
     yield fastify.register(zoro_1.default, { prefix: "/zoro" });
-    // proxy
-    fastify.get("/proxy", (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
-        const { url } = request.query;
-        if (!url) {
-            return reply.status(400).send({ error: 'Missing "url" query parameter' });
-        }
-        try {
-            const response = yield fetch(url, {
-                method: "GET",
-                headers: {
-                    "User-Agent": request.headers["user-agent"] || "Mozilla/5.0",
-                    Cookie: request.headers["cookie"] || "",
-                    Accept: request.headers["accept"] || "*/*",
-                },
-            });
-            if (!response.ok) {
-                return reply.status(response.status).send({
-                    error: `Failed to fetch resource. Status: ${response.status}`,
-                });
-            }
-            const data = yield response.text();
-            reply
-                .status(response.status)
-                .headers(Object.fromEntries(response.headers.entries()))
-                .send(data);
-        }
-        catch (error) {
-            reply
-                .status(500)
-                .send({ error: "Proxy Error", details: error.message });
-        }
-    }));
+    yield fastify.register(animeparadise_1.default, { prefix: "/animeparadise" });
+    yield fastify.register(aniplay_1.default, { prefix: "/aniplay" });
     fastify.get("/", (_, reply) => {
         reply
             .status(200)
@@ -104,7 +76,14 @@ const PORT = Number(process.env.PORT) || 5125;
     });
     fastify.get("/providers", (_, reply) => {
         reply.status(200).send({
-            providers: ["/animeunity", "/anix", "/gogoanime", "/zoro"],
+            providers: [
+                "/animeunity",
+                "/anix",
+                "/gogoanime",
+                "/zoro",
+                "/animeparadise",
+                "/aniplay",
+            ],
         });
     });
     fastify.get("*", (_, reply) => {

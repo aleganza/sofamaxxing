@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const axios_1 = __importDefault(require("axios"));
+const http_client_1 = __importDefault(require("../models/http-client"));
 const provider_1 = __importDefault(require("../models/provider"));
 const types_1 = require("../models/types");
 const cheerio = require("react-native-cheerio");
@@ -25,13 +25,14 @@ class AnimeUnity extends provider_1.default {
         this.colorHEX = "#007bff";
         this.logo = "https://www.animeunity.to/favicon-32x32.png";
         this.forRN = true;
-        /**
-         * @param query Search query
-         */
         this.search = (query) => __awaiter(this, void 0, void 0, function* () {
             var _a;
             try {
-                const res = yield axios_1.default.get(`${this.baseUrl}/archivio?title=${query}`);
+                const res = yield this.httpClient.get(`/archivio?title=${query}`, {
+                    headers: {
+                        Referer: this.baseUrl,
+                    },
+                });
                 const $ = cheerio.load(res.data);
                 if (!$)
                     return { results: [] };
@@ -58,10 +59,6 @@ class AnimeUnity extends provider_1.default {
                 throw new Error(err.message);
             }
         });
-        /**
-         * @param id Anime id
-         * @param page Page number
-         */
         this.fetchInfo = (id_1, ...args_1) => __awaiter(this, [id_1, ...args_1], void 0, function* (id, page = 1) {
             var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
             const url = `${this.baseUrl}/anime/${id}`;
@@ -70,7 +67,8 @@ class AnimeUnity extends provider_1.default {
             const firstPageEpisode = lastPageEpisode - 119;
             const url2 = `${this.baseUrl}/info_api/${id}/1?start_range=${firstPageEpisode}&end_range=${lastPageEpisode}`;
             try {
-                const res = yield axios_1.default.get(url);
+                // Richiesta alla pagina dell'anime
+                const res = yield this.httpClient.get(url);
                 const $ = cheerio.load(res.data);
                 const totalEpisodes = parseInt((_b = (_a = $("video-player")) === null || _a === void 0 ? void 0 : _a.attr("episodes_count")) !== null && _b !== void 0 ? _b : "0");
                 const totalPages = Math.round(totalEpisodes / 120) + 1;
@@ -83,8 +81,6 @@ class AnimeUnity extends provider_1.default {
                     id: id,
                     hasSeasons: false,
                     title: (_c = $("h1.title")) === null || _c === void 0 ? void 0 : _c.text().trim(),
-                    // url: url,
-                    // alID: $(".banner")?.attr("style")?.split("/")?.pop()?.split("-")[0],
                     genres: (_e = (_d = $(".info-wrapper.pt-3.pb-3 small")) === null || _d === void 0 ? void 0 : _d.map((_, element) => {
                         return $(element).text().replace(",", "").trim();
                     }).toArray()) !== null && _e !== void 0 ? _e : undefined,
@@ -94,10 +90,7 @@ class AnimeUnity extends provider_1.default {
                     description: $(".description").text().trim(),
                     episodes: [],
                 };
-                // fetch episodes method 1 (only first page can be fetchedd)
-                // const items = JSON.parse("" + $('video-player').attr('episodes') + "")
-                // fetch episodes method 2 (all pages can be fetched)
-                const res2 = yield axios_1.default.get(url2);
+                const res2 = (yield this.httpClient.get(url2));
                 const items = res2.data.episodes;
                 for (const i in items) {
                     (_l = animeInfo.episodes) === null || _l === void 0 ? void 0 : _l.push({
@@ -112,51 +105,36 @@ class AnimeUnity extends provider_1.default {
                 throw new Error(err.message);
             }
         });
-        /**
-         *
-         * @param episodeId Episode id
-         */
         this.fetchSources = (episodeId) => __awaiter(this, void 0, void 0, function* () {
             var _a, _b, _c, _d, _e, _f, _g, _h, _j;
             try {
-                const res = yield axios_1.default.get(`${this.baseUrl}/anime/${episodeId}`);
+                const res = yield this.httpClient.get(`${this.baseUrl}/anime/${episodeId}`);
                 const $ = cheerio.load(res.data);
                 const episodeSources = {
                     headers: {},
                     sources: [],
                 };
                 const streamUrl = $("video-player").attr("embed_url");
-                const headers0 = res.headers["set-cookie"];
-                const headers1 = res.headers["Cookie"];
-                // console.log("Stream URL:", streamUrl);
-                // console.log("set-cookie:", headers0);
-                // console.log("Cookie:", headers1);
-                // if(headers0) {
-                //   episodeSources.headers!['set-cookie'] = `${headers0.join(",")}`
-                // }
-                // if(headers1) {
-                //   episodeSources.headers!['Cookie'] = `${headers1.join(",")}`
-                // }
                 if (streamUrl) {
-                    const res = yield axios_1.default.get(streamUrl);
+                    const res = yield this.httpClient.get(streamUrl);
                     const $ = cheerio.load(res.data);
                     const domain = (_a = $('script:contains("window.video")')
-                        .html().toString()) === null || _a === void 0 ? void 0 : _a.match(/url: '(.*)'/)[1];
+                        .html()
+                        .toString()) === null || _a === void 0 ? void 0 : _a.match(/url: '(.*)'/)[1];
                     const token = (_b = $('script:contains("window.video")')
-                        .html().toString()) === null || _b === void 0 ? void 0 : _b.match(/token': '(.*)'/)[1];
+                        .html()
+                        .toString()) === null || _b === void 0 ? void 0 : _b.match(/token': '(.*)'/)[1];
                     const expires = (_c = $('script:contains("window.video")')
-                        .html().toString()) === null || _c === void 0 ? void 0 : _c.match(/expires': '(.*)'/)[1];
-                    // console.log(
-                    //   `Parsed data - domain: ${domain}, token: ${token}, expires: ${expires}`
-                    // );
+                        .html()
+                        .toString()) === null || _c === void 0 ? void 0 : _c.match(/expires': '(.*)'/)[1];
                     const size = Number((_e = (_d = $('script:contains("window.video")')
-                        .html().toString()) === null || _d === void 0 ? void 0 : _d.match(/"size":(\d+)/)) === null || _e === void 0 ? void 0 : _e[1]);
+                        .html()
+                        .toString()) === null || _d === void 0 ? void 0 : _d.match(/"size":(\d+)/)) === null || _e === void 0 ? void 0 : _e[1]);
                     const runtime = Number((_g = (_f = $('script:contains("window.video")')
-                        .html().toString()) === null || _f === void 0 ? void 0 : _f.match(/"duration":(\d+)/)) === null || _g === void 0 ? void 0 : _g[1]);
+                        .html()
+                        .toString()) === null || _f === void 0 ? void 0 : _f.match(/"duration":(\d+)/)) === null || _g === void 0 ? void 0 : _g[1]);
                     const defaultUrl = `${domain}${domain.includes("?") ? "&" : "?"}token=${token}&referer=&expires=${expires}&h=1`;
-                    console.log("Default URL:", defaultUrl);
-                    const m3u8Content = yield axios_1.default.get(defaultUrl);
-                    // console.log(res.headers)
+                    const m3u8Content = (yield this.httpClient.get(defaultUrl));
                     if (m3u8Content.data.includes("EXTM3U")) {
                         const videoList = m3u8Content.data.split("#EXT-X-STREAM-INF:");
                         for (const video of videoList !== null && videoList !== void 0 ? videoList : []) {
@@ -178,11 +156,12 @@ class AnimeUnity extends provider_1.default {
                         url: defaultUrl,
                         quality: `default`,
                         isM3U8: true,
-                        size: size * 1024, // Convert KB to Bytes
+                        size: size * 1024,
                         runtime,
                     });
                     episodeSources.download = (_j = (_h = $('script:contains("window.downloadUrl ")')
-                        .html().toString()) === null || _h === void 0 ? void 0 : _h.match(/downloadUrl = '(.*)'/)[1]) === null || _j === void 0 ? void 0 : _j.toString();
+                        .html()
+                        .toString()) === null || _h === void 0 ? void 0 : _h.match(/downloadUrl = '(.*)'/)[1]) === null || _j === void 0 ? void 0 : _j.toString();
                 }
                 return episodeSources;
             }
@@ -191,6 +170,7 @@ class AnimeUnity extends provider_1.default {
                 throw new Error(err.message);
             }
         });
+        this.httpClient = new http_client_1.default(this.baseUrl);
     }
 }
 exports.default = AnimeUnity;
