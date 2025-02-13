@@ -9,13 +9,9 @@
     "strict": true,
     "outDir": "./dist",
     "baseUrl": ".",
-    "declaration": true,               // Genera i file `.d.ts`
-    "declarationMap": true,            // Opzionale: genera source maps per i file `.d.ts`
-    "emitDeclarationOnly": false,      // Genera sia JS che `.d.ts`
-    "rootDir": "./src"                 // Specifica la cartella sorgente
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
+    "rootDir": "packages"
   },
-  "include": [
-    "src/**/*.ts"                      // Includi tutti i file TypeScript in `src`
-  ],
-  "exclude": ["node_modules", "dist"]  // Escludi queste cartelle
 }
