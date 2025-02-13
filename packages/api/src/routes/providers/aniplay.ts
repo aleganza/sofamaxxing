@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { AniPlay } from "sofamaxxing/dist";
+import AniPlay from "sofamaxxing/dist/providers/AniPlay";
 
 const aniplay = new AniPlay();
 

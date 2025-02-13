@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { AnimeUnity } from "sofamaxxing/dist";
+import AnimeUnity from "sofamaxxing/dist/providers/AnimeUnity";
 
 const animeUnity = new AnimeUnity();
 
