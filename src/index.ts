@@ -100,7 +100,7 @@ const PORT = Number(process.env.PORT) || 5125;
   if (process.env.NODE_ENV === "development") {
     try {
       await fastify.listen({ port: PORT, host: "0.0.0.0" });
-      console.log(console.log(`Server listening on http://localhost:${PORT}`));
+      console.log(`Server listening on http://localhost:${PORT}`);
     } catch (err) {
       fastify.log.error(err);
       process.exit(1);

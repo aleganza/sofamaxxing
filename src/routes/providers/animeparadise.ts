@@ -1,17 +1,17 @@
 import { FastifyInstance } from "fastify";
-import AniPlay from "sofamaxxing/dist/providers/AniPlay";
+import AnimeParadise from "sofamaxxing.ts/dist/providers/AnimeParadise";
 
-const aniplay = new AniPlay();
+const animeParadise = new AnimeParadise();
 
 const routes = async (fastify: FastifyInstance) => {
   fastify.get("/", async (_, reply) => {
     try {
       return reply.status(200).send({
-        description: `Welcome to ${aniplay.name}.`,
+        description: `Welcome to ${animeParadise.name}.`,
         routes: ["/:query", "/info/:id", "/episode/:episodeId"],
       });
     } catch (err) {
-      console.error("Error in /aniplay route:", err);
+      console.error("Error in /animeParadise route:", err);
       return reply.status(500).send({ message: "Internal server error" });
     }
   });
@@ -26,7 +26,7 @@ const routes = async (fastify: FastifyInstance) => {
     }
 
     try {
-      const result = await aniplay.search(query);
+      const result = await animeParadise.search(query);
       return reply.status(200).send(result);
     } catch (err) {
       console.error("Error in search:", err);
@@ -38,7 +38,7 @@ const routes = async (fastify: FastifyInstance) => {
     const { id } = request.params as { id: string };
 
     try {
-      const result = await aniplay.fetchInfo(id);
+      const result = await animeParadise.fetchInfo(id);
       return reply.status(200).send(result);
     } catch (err) {
       console.error("Error in fetchInfo:", err);
@@ -46,31 +46,12 @@ const routes = async (fastify: FastifyInstance) => {
     }
   });
 
-  fastify.get("/episode/:id", async (request, reply) => {
+  fastify.get("/episode/*", async (request, reply) => {
     const fullUrl = request.url;
-    const episodeId = fullUrl.split("/episode/")[1].split("&")[0];
-
-    const { host = "yuki" } = request.query as {
-      host?: "maze" | "pahe" | "yuki";
-    };
-    const { type = "sub" } = request.params as { type?: "sub" | "dub" };
-
-    const validHosts = ["maze", "pahe", "yuki"];
-    if (!validHosts.includes(host)) {
-      return reply.status(400).send({
-        message: `Invalid host value. Valid values are: ${validHosts.join(", ")}`,
-      });
-    }
-
-    const validTypes = ["sub", "dub"];
-    if (!validTypes.includes(type)) {
-      return reply.status(400).send({
-        message: `Invalid type value. Valid values are: ${validTypes.join(", ")}`,
-      });
-    }
+    const episodeId = fullUrl.split("/episode/")[1];
 
     try {
-      const result = await aniplay.fetchSources(episodeId, host, type);
+      const result = await animeParadise.fetchSources(episodeId);
       return reply.status(200).send(result);
     } catch (err) {
       console.error("Error in fetchSources:", err);

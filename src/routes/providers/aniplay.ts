@@ -1,20 +1,17 @@
 import { FastifyInstance } from "fastify";
-import AnimeUnity from "sofamaxxing/dist/providers/AnimeUnity";
+import AniPlay from "sofamaxxing.ts/dist/providers/AniPlay";
 
-const animeUnity = new AnimeUnity();
+const aniplay = new AniPlay();
 
 const routes = async (fastify: FastifyInstance) => {
   fastify.get("/", async (_, reply) => {
     try {
       return reply.status(200).send({
-        description: `Welcome to ${animeUnity.name}.`,
-        logo: animeUnity.logo,
-        baseUrl: animeUnity.baseUrl,
-        supportedLanguages: animeUnity.languages,
+        description: `Welcome to ${aniplay.name}.`,
         routes: ["/:query", "/info/:id", "/episode/:episodeId"],
       });
     } catch (err) {
-      console.error("Error in /animeunity route:", err);
+      console.error("Error in /aniplay route:", err);
       return reply.status(500).send({ message: "Internal server error" });
     }
   });
@@ -29,7 +26,7 @@ const routes = async (fastify: FastifyInstance) => {
     }
 
     try {
-      const result = await animeUnity.search(query);
+      const result = await aniplay.search(query);
       return reply.status(200).send(result);
     } catch (err) {
       console.error("Error in search:", err);
@@ -39,10 +36,9 @@ const routes = async (fastify: FastifyInstance) => {
 
   fastify.get("/info/:id", async (request, reply) => {
     const { id } = request.params as { id: string };
-    const { page = 1 } = request.query as { page?: number };
 
     try {
-      const result = await animeUnity.fetchInfo(id, page);
+      const result = await aniplay.fetchInfo(id);
       return reply.status(200).send(result);
     } catch (err) {
       console.error("Error in fetchInfo:", err);
@@ -50,11 +46,31 @@ const routes = async (fastify: FastifyInstance) => {
     }
   });
 
-  fastify.get("/episode/*", async (request, reply) => {
-    const episodeId = (request.params as any)["*"] as string;
+  fastify.get("/episode/:id", async (request, reply) => {
+    const fullUrl = request.url;
+    const episodeId = fullUrl.split("/episode/")[1].split("&")[0];
+
+    const { host = "yuki" } = request.query as {
+      host?: "maze" | "pahe" | "yuki";
+    };
+    const { type = "sub" } = request.params as { type?: "sub" | "dub" };
+
+    const validHosts = ["maze", "pahe", "yuki"];
+    if (!validHosts.includes(host)) {
+      return reply.status(400).send({
+        message: `Invalid host value. Valid values are: ${validHosts.join(", ")}`,
+      });
+    }
+
+    const validTypes = ["sub", "dub"];
+    if (!validTypes.includes(type)) {
+      return reply.status(400).send({
+        message: `Invalid type value. Valid values are: ${validTypes.join(", ")}`,
+      });
+    }
 
     try {
-      const result = await animeUnity.fetchSources(episodeId);
+      const result = await aniplay.fetchSources(episodeId, host, type);
       return reply.status(200).send(result);
     } catch (err) {
       console.error("Error in fetchSources:", err);

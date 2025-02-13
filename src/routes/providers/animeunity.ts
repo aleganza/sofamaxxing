@@ -1,17 +1,20 @@
 import { FastifyInstance } from "fastify";
-import AnimeParadise from "sofamaxxing/dist/providers/AnimeParadise";
+import AnimeUnity from "sofamaxxing.ts/dist/providers/AnimeUnity";
 
-const animeParadise = new AnimeParadise();
+const animeUnity = new AnimeUnity();
 
 const routes = async (fastify: FastifyInstance) => {
   fastify.get("/", async (_, reply) => {
     try {
       return reply.status(200).send({
-        description: `Welcome to ${animeParadise.name}.`,
+        description: `Welcome to ${animeUnity.name}.`,
+        logo: animeUnity.logo,
+        baseUrl: animeUnity.baseUrl,
+        supportedLanguages: animeUnity.languages,
         routes: ["/:query", "/info/:id", "/episode/:episodeId"],
       });
     } catch (err) {
-      console.error("Error in /animeParadise route:", err);
+      console.error("Error in /animeunity route:", err);
       return reply.status(500).send({ message: "Internal server error" });
     }
   });
@@ -26,7 +29,7 @@ const routes = async (fastify: FastifyInstance) => {
     }
 
     try {
-      const result = await animeParadise.search(query);
+      const result = await animeUnity.search(query);
       return reply.status(200).send(result);
     } catch (err) {
       console.error("Error in search:", err);
@@ -36,9 +39,10 @@ const routes = async (fastify: FastifyInstance) => {
 
   fastify.get("/info/:id", async (request, reply) => {
     const { id } = request.params as { id: string };
+    const { page = 1 } = request.query as { page?: number };
 
     try {
-      const result = await animeParadise.fetchInfo(id);
+      const result = await animeUnity.fetchInfo(id, page);
       return reply.status(200).send(result);
     } catch (err) {
       console.error("Error in fetchInfo:", err);
@@ -47,11 +51,10 @@ const routes = async (fastify: FastifyInstance) => {
   });
 
   fastify.get("/episode/*", async (request, reply) => {
-    const fullUrl = request.url;
-    const episodeId = fullUrl.split("/episode/")[1];
+    const episodeId = (request.params as any)["*"] as string;
 
     try {
-      const result = await animeParadise.fetchSources(episodeId);
+      const result = await animeUnity.fetchSources(episodeId);
       return reply.status(200).send(result);
     } catch (err) {
       console.error("Error in fetchSources:", err);
