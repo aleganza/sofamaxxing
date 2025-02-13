@@ -8,6 +8,7 @@
     "build": "tsc"
   },
   "dependencies": {
+    "@consumet/extensions": "github:consumet/consumet.ts",
     "@fastify/cors": "^10.0.2",
     "@fastify/rate-limit": "^10.2.2",
     "@vercel/node": "^5.1.3",
