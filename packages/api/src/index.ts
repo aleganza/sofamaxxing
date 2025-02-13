@@ -2,7 +2,6 @@ import "dotenv/config";
 
 import FastifyCors from "@fastify/cors";
 import Fastify from "fastify";
-import chalk from "chalk";
 import animeunity from "./routes/providers/animeunity";
 import anix from "./routes/providers/anix";
 import gogoanime from "./routes/providers/gogoanime";
@@ -101,7 +100,7 @@ const PORT = Number(process.env.PORT) || 5125;
   if (process.env.NODE_ENV === "development") {
     try {
       await fastify.listen({ port: PORT, host: "0.0.0.0" });
-      console.log(chalk.green(`Server listening on http://localhost:${PORT}`));
+      console.log(console.log(`Server listening on http://localhost:${PORT}`));
     } catch (err) {
       fastify.log.error(err);
       process.exit(1);
