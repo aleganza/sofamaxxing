@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { AniPlay } from "../../../../scraper/src";
+import { AniPlay } from "sofamaxxing/dist";
 
 const aniplay = new AniPlay();
 

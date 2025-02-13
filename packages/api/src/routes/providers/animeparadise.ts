@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import AnimeParadise from "sofamaxxing/src/providers/AnimeParadise";
+import { AnimeParadise } from "sofamaxxing/dist/index";
 
 const animeParadise = new AnimeParadise();
 
