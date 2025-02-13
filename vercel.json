@@ -4,15 +4,13 @@
     {
       "src": "packages/api/src/index.ts",
       "use": "@vercel/node",
-      "config": {
-        "distDir": "packages/api/dist"
-      }
+      "config": { "nodeVersion": "18.x" }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "packages/api/src/index.ts"
+      "dest": "packages/api/dist/index.js"
     }
   ]
 }
